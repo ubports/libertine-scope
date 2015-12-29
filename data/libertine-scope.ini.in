@@ -1,0 +1,11 @@
+[ScopeConfig]
+_DisplayName=Legacy Applications Scope
+_Description=Deb-packaged X11-based legacy applications.
+Art=screenshot.png
+Author=Stephen M. Webb
+Icon=icon.png
+Keywords=apps
+
+[Appearance]
+PageHeader.Logo=logo.png
+

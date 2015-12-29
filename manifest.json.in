@@ -1,0 +1,15 @@
+{
+    "architecture": "@CLICK_ARCH@",
+    "description": "A Unity scope that surfaces Legacy apps from a Libertine container",
+    "framework": "ubuntu-sdk-15.04.3",
+    "hooks": {
+        "libertine-scope": {
+            "apparmor": "libertine-scope.apparmor",
+            "scope": "libertine-scope"
+        }
+    },
+    "maintainer": "Stephen M. Webb <stephen.webb@canonical.com>",
+    "name": "libertine-scope.canonical",
+    "title": "libertine-scope",
+    "version": "0.1"
+}

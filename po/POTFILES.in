@@ -1,0 +1,11 @@
+src/query.cpp
+src/container.cpp
+src/applauncher.cpp
+src/libertine.cpp
+src/scope.cpp
+src/libertine.h
+src/scope.h
+src/applauncher.h
+src/query.h
+src/container.h
+src/localization.h
