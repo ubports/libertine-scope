@@ -25,13 +25,7 @@ include(GNUInstallDirs)
 find_package(PkgConfig)
 find_package(Intltool)
 
-pkg_check_modules(
-  SCOPE
-  libunity-scopes>=0.6.0
-  jsoncpp
-  net-cpp>=1.1.0
-  REQUIRED
-)
+pkg_check_modules(SCOPE libunity-scopes>=0.6.0 REQUIRED)
 
 # Add our dependencies to the include paths
 include_directories(

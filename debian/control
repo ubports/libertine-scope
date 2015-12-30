@@ -2,9 +2,13 @@ Source: libertine-scope
 Section: x11
 Priority: optional
 Maintainer: Stephen M. Webb <stephen.webb@canonical.com>
-Build-Depends: cmake,
+Build-Depends: cmake (>= 3.2),
+               cmake-extras,
                debhelper (>= 9),
-               pkg-config
+               intltool,
+               libunity-scopes-dev (>= 0.6.0),
+               pkg-config,
+               qtbase5-dev
 Standards-Version: 3.9.6
 
 Package: libertine-scope
