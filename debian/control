@@ -1,0 +1,20 @@
+Source: libertine-scope
+Section: x11
+Priority: optional
+Maintainer: Stephen M. Webb <stephen.webb@canonical.com>
+Build-Depends: cmake,
+               debhelper (>= 9),
+               pkg-config
+Standards-Version: 3.9.6
+
+Package: libertine-scope
+Architecture: any
+Depends: libertine-tools,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Description: Libertine packages scope for Unity
+ The Libertine package scope surfaces applications installed in a Libertine
+ sandbox for the support of deb-packaged X11-based legacy software that is
+ still waiting to be ported natively to Unity.
+ .
+ This package provides the Libertine scope itself.
