@@ -33,10 +33,6 @@ include_directories(
   ${SCOPE_INCLUDE_DIRS}
 )
 
-# Do not remove these 2 lines, they are required for the correct functionality of the Ubuntu-SDK
-set(UBUNTU_MANIFEST_PATH "manifest.json.in" CACHE INTERNAL "Tells QtCreator location and name of the manifest file")
-set(UBUNTU_PROJECT_TYPE "Scope" CACHE INTERNAL "Tells QtCreator this is a Scope project")
-
 # Important project paths
 set(CMAKE_INSTALL_PREFIX /)
 set(SCOPE_INSTALL_DIR "/libertine-scope")
@@ -50,33 +46,15 @@ add_definitions(-DSCOPE_NAME="${SCOPE_NAME}")
 add_definitions(-DGETTEXT_PACKAGE="${GETTEXT_PACKAGE}")
 
 # This command figures out the target architecture and puts it into the manifest file
-execute_process(
-  COMMAND dpkg-architecture -qDEB_HOST_ARCH
-  OUTPUT_VARIABLE CLICK_ARCH
-  OUTPUT_STRIP_TRAILING_WHITESPACE
+execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
+                OUTPUT_VARIABLE CLICK_ARCH
+                OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 # Configure and install the click manifest and apparmor files
 configure_file(manifest.json.in ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/manifest.json DESTINATION "/")
 install(FILES "libertine-scope.apparmor" DESTINATION "/")
-
-# Make these files show up in QtCreator
-file(GLOB_RECURSE
-  _PO_FILES
-  "po/*.po"
-)
-add_custom_target(hidden_files
-  ALL
-  SOURCES
-    manifest.json.in
-    libertine-scope.apparmor
-    data/libertine-scope.ini.in
-    data/libertine-scope-settings.ini.in
-    po/POTFILES.in
-    po/${GETTEXT_PACKAGE}.pot
-    ${_PO_FILES}
-)
 
 # Add our main directories
 add_subdirectory(src)
@@ -86,8 +64,7 @@ add_subdirectory(po)
 # Set up the tests
 enable_testing()
 add_subdirectory(tests)
-add_custom_target(
-  check
-  ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure
+add_custom_target(check
+                 ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure
 )
 
