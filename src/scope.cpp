@@ -13,12 +13,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <scope.h>
+#include "scope.h"
 
 #include <fstream>
 #include <iostream>
 #include <localization.h>
-#include <query.h>
+#include "preview.h"
+#include "query.h"
 #include <sstream>
 
 
@@ -57,9 +58,8 @@ usc::PreviewQueryBase::UPtr Scope::
 preview(usc::Result const&         result,
         usc::ActionMetadata const& metadata)
 {
-  // Boilerplate construction of Preview
-  //return usc::PreviewQueryBase::UPtr(new Preview(result, metadata));
   std::cerr << "==smw> " << __PRETTY_FUNCTION__ << "\n";
+  return usc::PreviewQueryBase::UPtr(new Preview(result, metadata));
 }
 
 

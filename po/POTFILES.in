@@ -2,7 +2,9 @@ src/query.cpp
 src/container.cpp
 src/applauncher.cpp
 src/libertine.cpp
+src/preview.cpp
 src/scope.cpp
+src/preview.h
 src/libertine.h
 src/scope.h
 src/applauncher.h
