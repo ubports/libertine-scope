@@ -51,6 +51,16 @@ cancelled()
 }
 
 
+/**
+ * Generates a ubuntu-application-launcher URI for a contained desktop file.
+ */
+static std::string
+app_uri(Container const& container, AppLauncher const& app)
+{
+  return "appid://" + container.id() + "/" + app.id() + "/0.0";
+}
+
+
 void Query::
 run(usc::SearchReplyProxy const& reply)
 {
@@ -73,7 +83,7 @@ run(usc::SearchReplyProxy const& reply)
       usc::CategorisedResult result(category);
       result.set_title(app.name());
       result.set_art("file://" + app.icon());
-      result.set_uri("application://" + app.desktop_file());
+      result.set_uri(app_uri(*container, app));
       if (!reply->push(result))
       {
         break;

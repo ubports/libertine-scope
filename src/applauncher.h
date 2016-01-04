@@ -36,6 +36,9 @@ public:
   ~AppLauncher();
 
   virtual std::string
+  id() const;
+
+  virtual std::string
   name() const;
 
   virtual bool

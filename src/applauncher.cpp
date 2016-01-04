@@ -19,6 +19,7 @@
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
+#include <QtCore/QFileInfo>
 
 
 AppLauncher::
@@ -41,13 +42,21 @@ AppLauncher(std::string const& json_string)
     }
   }
 
-  desktop_file_ = "application://";
+  desktop_file_ = obj["desktop_file_name"].toString().toStdString();
 }
 
 
 AppLauncher::
 ~AppLauncher()
 {
+}
+
+
+std::string AppLauncher::
+id() const
+{
+  QFileInfo fi(QString::fromStdString(desktop_file_));
+  return fi.baseName().toStdString();
 }
 
 
