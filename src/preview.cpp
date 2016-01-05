@@ -15,11 +15,9 @@
  */
 #include "preview.h"
 
-#include <iostream>
 #include <unity/scopes/PreviewReply.h>
 #include <unity/scopes/Variant.h>
 #include <unity/scopes/VariantBuilder.h>
-
 
 
 Preview::

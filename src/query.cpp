@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Canonical Ltd.
+ * Copyright 2015-2016 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -25,29 +25,20 @@
 #include <unity/scopes/QueryBase.h>
 #include <unity/scopes/SearchReply.h>
 
-#include <iostream>
-
 namespace usc = unity::scopes;
-
-using namespace std;
 
 
 Query::
-Query(usc::CannedQuery const& query,
+Query(usc::CannedQuery const&    query,
       usc::SearchMetadata const& metadata)
 : usc::SearchQueryBase(query, metadata)
 {
-  std::cerr << "==smw> " << __PRETTY_FUNCTION__ << " begins\n";
-  std::cerr << "==smw>   query_string='" << query.query_string() << "'\n";
-  std::cerr << "==smw>   to_uri='" << query.to_uri() << "'\n";
-  std::cerr << "==smw> " << __PRETTY_FUNCTION__ << " ends\n";
 }
 
 
 void Query::
 cancelled()
 {
-  std::cerr << "==smw> " << __PRETTY_FUNCTION__ << "\n";
 }
 
 
@@ -64,12 +55,8 @@ app_uri(Container const& container, AppLauncher const& app)
 void Query::
 run(usc::SearchReplyProxy const& reply)
 {
-  // Start by getting information about the query
   usc::CannedQuery const& query(usc::SearchQueryBase::query());
-
-  // Get the query string
-  string query_string = query.query_string();
-
+  std::string query_string = query.query_string();
 
   Libertine libertine;
   for (auto const& container: libertine.get_container_list())
