@@ -7,6 +7,7 @@ Build-Depends: cmake (>= 3.2),
                debhelper (>= 9),
                intltool,
                libunity-scopes-dev (>= 0.6.0),
+               liburl-dispatcher1-dev,
                pkg-config,
                qtbase5-dev
 Standards-Version: 3.9.6

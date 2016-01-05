@@ -28,31 +28,37 @@ class Scope
 : public unity::scopes::ScopeBase
 {
 public:
-    /**
-     * Called once at startup.
-     */
-    void
-    start(std::string const&) override;
+  /**
+   * Called once at startup.
+   */
+  void
+  start(std::string const&) override;
 
-    /**
-     * Called at shutdown.
-     */
-    void
-    stop() override;
+  /**
+   * Called at shutdown.
+   */
+  void
+  stop() override;
 
-    /**
-     * Called each time a new preview is requested
-     */
-    unity::scopes::PreviewQueryBase::UPtr
-    preview(unity::scopes::Result const&         result,
-            unity::scopes::ActionMetadata const& metadata) override;
+  /**
+   * Called each time a new preview is requested
+   */
+  unity::scopes::PreviewQueryBase::UPtr
+  preview(unity::scopes::Result const&         result,
+          unity::scopes::ActionMetadata const& metadata) override;
 
-    /**
-     * Called each time a new query is requested
-     */
-    unity::scopes::SearchQueryBase::UPtr
-    search(unity::scopes::CannedQuery const&    query,
-           unity::scopes::SearchMetadata const& metadata) override;
+  /**
+   * Called each time a new query is requested
+   */
+  unity::scopes::SearchQueryBase::UPtr
+  search(unity::scopes::CannedQuery const&    query,
+         unity::scopes::SearchMetadata const& metadata) override;
+
+  unity::scopes::ActivationQueryBase::UPtr
+  perform_action(unity::scopes::Result const&         result,
+                 unity::scopes::ActionMetadata const& metadata,
+                 std::string const&                   widget_id,
+                 std::string const&                   action_id) override;
 };
 
 #endif // SCOPE_H_
