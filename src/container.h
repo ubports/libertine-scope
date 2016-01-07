@@ -23,7 +23,12 @@
 
 
 /**
- * Proxy object for a Libertine container.
+ * A Libertine container.
+ *
+ * A Libertine container is really just a named collection of applications.
+ *
+ * This class itself is an opaque interface so it can be faked during testing or
+ * provided for reals in production.
  */
 class Container
 {
@@ -41,7 +46,7 @@ public:
   Container(std::string const& container_id);
 
   virtual
-  ~Container();
+  ~Container() = 0;
 
   virtual std::string
   id() const;
@@ -52,7 +57,7 @@ public:
   virtual AppLauncherList const&
   app_launchers() const;
 
-private:
+protected:
   std::string     id_;
   std::string     name_;
   AppLauncherList app_launcher_list_;
