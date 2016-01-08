@@ -1,7 +1,6 @@
 SET (CMAKE_INCLUDE_CURRENT_DIR ON)
 SET (CMAKE_AUTOMOC ON)
 
-find_package(Qt5Core REQUIRED)
 pkg_check_modules(URL_DISPATCHER REQUIRED url-dispatcher-1)
 
 # Find all the sources
@@ -11,30 +10,25 @@ file(GLOB_RECURSE
   "*.h"
 )
 
-# Build a shared library containing our scope code.
-add_library(
-  scope SHARED
+add_library(scope SHARED
   ${SCOPE_SOURCES}
 )
 
 include_directories(${URL_DISPATCHER_INCLUDE_DIRS})
 
-target_link_libraries(
-  scope
+target_link_libraries(scope
   ${SCOPE_LDFLAGS}
   Qt5::Core
   ${URL_DISPATCHER_LIBRARIES}
 )
 
 
-set_target_properties(
-  scope
+set_target_properties(scope
   PROPERTIES
     OUTPUT_NAME "${SCOPE_NAME}"
 )
 
-install(
-  TARGETS scope
+install(TARGETS scope
   LIBRARY DESTINATION ${SCOPE_INSTALL_DIR}
 )
 

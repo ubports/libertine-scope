@@ -24,12 +24,14 @@ add_definitions(
 include(GNUInstallDirs)
 find_package(PkgConfig)
 find_package(Intltool)
+find_package(Qt5Core REQUIRED)
 
 pkg_check_modules(SCOPE libunity-scopes>=0.6.0 REQUIRED)
 
 # Add our dependencies to the include paths
 include_directories(
-  "${CMAKE_SOURCE_DIR}/src"
+  ${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/src
   ${SCOPE_INCLUDE_DIRS}
 )
 

@@ -1,9 +1,14 @@
+tests/fake_container.cpp
+tests/test_scope.cpp
 src/query.cpp
 src/container.cpp
 src/applauncher.cpp
 src/libertine.cpp
 src/preview.cpp
 src/scope.cpp
+tests/fake_container_json.h
+tests/scopefixture.h
+tests/fake_container.h
 src/preview.h
 src/libertine.h
 src/scope.h

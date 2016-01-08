@@ -15,6 +15,7 @@
  */
 #include "scope.h"
 
+#include <iostream>
 #include <localization.h>
 #include "preview.h"
 #include "query.h"
@@ -55,10 +56,16 @@ public:
 void Scope::
 start(std::string const&)
 {
+  std::cerr << "==smw> " << __PRETTY_FUNCTION__ << "() begins\n";
   setlocale(LC_ALL, "");
+  try{
   std::string translation_directory = ScopeBase::scope_directory()
                                     + "/../share/locale/";
   bindtextdomain(GETTEXT_PACKAGE, translation_directory.c_str());
+  } catch (std::exception& ex) {
+    std::cerr << "==smw> " << __PRETTY_FUNCTION__ << "() exception caught: " << ex.what() << "\n";
+  }
+  std::cerr << "==smw> " << __PRETTY_FUNCTION__ << "() ends\n";
 }
 
 
