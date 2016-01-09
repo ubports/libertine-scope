@@ -1,5 +1,4 @@
 # Build with system gmock and its embedded gtest -- the horror of hardcoding
-set (GMOCK_INCLUDE_DIR "/usr/include/gmock/include" CACHE PATH "gmock source include directory")
 set (GMOCK_SOURCE_DIR "/usr/src/gmock" CACHE PATH "gmock source directory")
 set (GTEST_INCLUDE_DIR "${GMOCK_SOURCE_DIR}/gtest/include" CACHE PATH "gtest source include directory")
 add_subdirectory(${GMOCK_SOURCE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/gmock")
@@ -16,3 +15,6 @@ target_link_libraries(libertine_scope_tests
   gmock_main
 )
 
+add_test(test_scope
+  libertine_sope_tests
+)
