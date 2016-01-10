@@ -7,6 +7,7 @@ src/libertine.cpp
 src/preview.cpp
 src/scope.cpp
 tests/fake_container_json.h
+tests/TypedScopeFixture.h
 tests/scopefixture.h
 tests/fake_container.h
 src/preview.h

@@ -16,5 +16,5 @@ target_link_libraries(libertine_scope_tests
 )
 
 add_test(test_scope
-  libertine_sope_tests
+  libertine_scope_tests
 )
