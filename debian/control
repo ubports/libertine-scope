@@ -5,6 +5,7 @@ Maintainer: Stephen M. Webb <stephen.webb@canonical.com>
 Build-Depends: cmake (>= 3),
                cmake-extras,
                debhelper (>= 9),
+               google-mock,
                intltool,
                libunity-scopes-dev (>= 0.6.0),
                liburl-dispatcher1-dev,
