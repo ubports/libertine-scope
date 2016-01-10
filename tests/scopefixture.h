@@ -18,7 +18,8 @@
 
 #include <iostream>
 #include "src/scope.h"
-#include <unity/scopes/testing/TypedScopeFixture.h>
+//#include <unity/scopes/testing/TypedScopeFixture.h>
+#include "tests/TypedScopeFixture.h"
 
 
 namespace unity
