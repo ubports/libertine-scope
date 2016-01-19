@@ -13,9 +13,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "libertine.h"
+#include "libertine-scope/libertine.h"
 
-#include "container.h"
+#include "libertine-scope/container.h"
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -69,30 +69,46 @@ public:
   { }
 };
 
+class LibertineCli
+: public Libertine
+{
+public:
+  LibertineCli()
+  {
+    QProcess libertine_container_manager;
+    libertine_container_manager.start("libertine-container-manager",
+                                      QStringList() <<  "list");
+    if (libertine_container_manager.waitForFinished())
+    {
+      QString container_id_list(libertine_container_manager.readAllStandardOutput());
+      for (auto const& id: container_id_list.split("\n", QString::SkipEmptyParts))
+      {
+        container_list_.emplace_back(new LibertineContainer(id.toStdString()));
+      }
+    }
+  }
+
+  Libertine::ContainerList const&
+  get_container_list() const override
+  {
+    return container_list_;
+  }
+
+private:
+  ContainerList container_list_;
+};
 
 } // anonymous namespace
 
 
 Libertine::
-Libertine()
-{
-  QProcess libertine_container_manager;
-  libertine_container_manager.start("libertine-container-manager",
-                                    QStringList() <<  "list");
-  if (libertine_container_manager.waitForFinished())
-  {
-    QString container_id_list(libertine_container_manager.readAllStandardOutput());
-    for (auto const& id: container_id_list.split("\n", QString::SkipEmptyParts))
-    {
-      container_list_.emplace_back(new LibertineContainer(id.toStdString()));
-    }
-  }
-}
+~Libertine()
+{ }
 
 
-Libertine::ContainerList const& Libertine::
-get_container_list() const
+Libertine::UPtr Libertine::
+from_libertine_cli()
 {
-  return container_list_;
+  return Libertine::UPtr(new LibertineCli());
 }
 

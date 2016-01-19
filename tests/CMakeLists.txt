@@ -5,6 +5,7 @@ add_subdirectory(${GMOCK_SOURCE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/gmock")
 
 add_executable(libertine_scope_tests
   fake_container.cpp
+  fake_libertine.cpp
   test_scope.cpp
 )
 

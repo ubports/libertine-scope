@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Canonical Ltd.
+ * Copyright 2016 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -13,38 +13,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "container.h"
+#include "tests/fake_libertine.h"
+
+#include "tests/fake_container.h"
 
 
-Container::
-Container(std::string const& container_id)
-: id_(container_id)
-, name_(container_id)
-{ }
-
-
-Container::
-~Container()
-{ }
-
-
-std::string Container::
-id() const
+FakeLibertine::
+FakeLibertine(std::string const& json)
 {
-  return id_;
+  container_list_.emplace_back(new FakeContainer(json));
 }
 
 
-std::string Container::
-name() const
+FakeLibertine::
+~FakeLibertine()
 {
-  return name_;
 }
 
 
-Container::AppLauncherList const& Container::
-app_launchers() const
+Libertine::ContainerList const& FakeLibertine::
+get_container_list() const
 {
-  return app_launcher_list_;
+  return container_list_;
+}
+
+
+Libertine::UPtr FakeLibertine::
+make_fake(std::string const& json)
+{
+  return Libertine::UPtr(new FakeLibertine(json));
 }
 

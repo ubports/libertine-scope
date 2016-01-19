@@ -31,7 +31,7 @@ pkg_check_modules(SCOPE libunity-scopes>=0.6.0 REQUIRED)
 # Add our dependencies to the include paths
 include_directories(
   ${CMAKE_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}/libertine-scope
   ${SCOPE_INCLUDE_DIRS}
 )
 
@@ -60,7 +60,7 @@ install(FILES "libertine-scope.apparmor"
         DESTINATION ${SCOPE_INSTALL_DIR})
 
 # Add our main directories
-add_subdirectory(src)
+add_subdirectory(libertine-scope)
 add_subdirectory(data)
 add_subdirectory(po)
 

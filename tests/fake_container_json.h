@@ -18,8 +18,9 @@
 
 #include <string>
 
-const std::string FAKE_COMTAINER_JSON = R"
+const std::string FAKE_CONTAINER_JSON = R"(
 {
+    "name": "Fake Container",
     "app_launchers": [
         {
             "desktop_file_name": "/home/someuser/.cache/libertine-container/fake1/rootfs/usr/share/applications/mb-panel-manager.desktop",
@@ -41,9 +42,8 @@ const std::string FAKE_COMTAINER_JSON = R"
             "name": "Sakura",
             "no_display": false
         }
-    ],
-    "name": "Fake Container"
+    ]
 }
-";
+)";
 
 #endif /* LIBERTINE_SCOPE_FAKE_CONTAINER_JSON_H_ */

@@ -15,6 +15,7 @@
  */
 #include "tests/fake_container.h"
 
+#include <QByteArray>
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
@@ -27,10 +28,10 @@ FakeContainer::
 FakeContainer(std::string const& json_string)
 : Container("fake")
 {
-  QJsonDocument json = QJsonDocument::fromRawData(json_string.c_str(), json_string.length());
+  QJsonDocument json = QJsonDocument::fromJson(QByteArray::fromStdString(json_string), nullptr);
   QJsonObject object = json.object();
   QJsonValue name = object["name"];
-  if (name != QJsonValue::Undefined)
+  if (!name.isNull())
   {
     name_ = name.toString().toStdString();
 

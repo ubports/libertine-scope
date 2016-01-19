@@ -13,11 +13,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <query.h>
+#include "libertine-scope/query.h"
 
-#include "applauncher.h"
-#include "container.h"
-#include "libertine.h"
+#include "libertine-scope/applauncher.h"
+#include "libertine-scope/container.h"
+#include "libertine-scope/libertine.h"
 #include <unity/scopes/CategorisedResult.h>
 #include <unity/scopes/CategoryRenderer.h>
 #include <unity/scopes/QueryBase.h>
@@ -65,8 +65,10 @@ app_uri(Container const& container, AppLauncher const& app)
 
 Query::
 Query(usc::CannedQuery const&    query,
-      usc::SearchMetadata const& metadata)
+      usc::SearchMetadata const& metadata,
+      Libertine::Factory const&  libertine_factory)
 : usc::SearchQueryBase(query, metadata)
+, libertine_factory_(libertine_factory)
 {
 }
 
@@ -83,8 +85,8 @@ run(usc::SearchReplyProxy const& reply)
   usc::CannedQuery const& query(usc::SearchQueryBase::query());
   std::string query_string = query.query_string();
 
-  Libertine libertine;
-  for (auto const& container: libertine.get_container_list())
+  Libertine::UPtr libertine = libertine_factory_();
+  for (auto const& container: libertine->get_container_list())
   {
     auto category = reply->register_category(container->id(),
                                              container->name(),

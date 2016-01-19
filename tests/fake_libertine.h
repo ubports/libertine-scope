@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Canonical Ltd.
+ * Copyright 2016 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -13,32 +13,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LIBERTINE_SCOPE_QUERY_H_
-#define LIBERTINE_SCOPE_QUERY_H_
+#ifndef LIBERTINE_SCOPE_FAKE_LIBERTINE_H_
+#define LIBERTINE_SCOPE_FAKE_LIBERTINE_H_
 
-#include <unity/scopes/ReplyProxyFwd.h>
-#include <unity/scopes/SearchQueryBase.h>
+
+#include "libertine-scope/libertine.h"
 
 
 /**
- * Engine to run a specific scope query.
+ * A Fake Libertine.
  */
-class Query
-: public unity::scopes::SearchQueryBase
+class FakeLibertine
+: public Libertine
 {
 public:
-    Query(unity::scopes::CannedQuery const&    query,
-          unity::scopes::SearchMetadata const& metadata);
+  ~FakeLibertine();
 
-    ~Query() = default;
+  Libertine::ContainerList const&
+  get_container_list() const override;
 
-    void
-    cancelled() override;
+  static Libertine::UPtr
+  make_fake(std::string const& json);
 
-    void
-    run(unity::scopes::SearchReplyProxy const& reply) override;
+protected:
+  explicit
+  FakeLibertine(std::string const& json);
+
+private:
+  ContainerList container_list_;
 };
 
-#endif // LIBERTINE_SCOPE_QUERY_H_
-
-
+#endif /* LIBERTINE_SCOPE_FAKE_LIBERTINE_H_ */

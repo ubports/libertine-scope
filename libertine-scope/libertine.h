@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Canonical Ltd.
+ * Copyright 2015-2016 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -16,6 +16,7 @@
 #ifndef LIBERTINE_SCOPE_LIBERTINE_H
 #define LIBERTINE_SCOPE_LIBERTINE_H
 
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -28,13 +29,18 @@ class Container;
 class Libertine
 {
 public:
+  using UPtr = std::unique_ptr<Libertine>;
   using ContainerList = std::vector<std::unique_ptr<Container>>;
 
-public:
-  Libertine();
+  /**
+   * Queries need to be parametrized on the Libertine implementation for reverse
+   * dependency injection during unit testing.
+   */
+  using Factory = std::function<Libertine::UPtr(void)>;
 
+public:
   virtual
-  ~Libertine() = default;
+  ~Libertine() = 0;
 
   /**
    * Gets a list of identifiers for all Libertine containers on the system.
@@ -46,10 +52,15 @@ public:
    * function is running.
    */
   virtual ContainerList const&
-  get_container_list() const;
+  get_container_list() const = 0;
 
-private:
-  ContainerList container_list_;
+  /**
+   * A default Libertine factory to create the Libertine object using the
+   * command-line tools.
+   */
+  static Libertine::UPtr
+  from_libertine_cli();
 };
+
 
 #endif /* LIBERTINE_SCOPE_LIBERTINE_H */

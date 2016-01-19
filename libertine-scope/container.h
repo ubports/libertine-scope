@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Canonical Ltd.
+ * Copyright 2015-2016 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -17,13 +17,13 @@
 #define LIBERTINE_SCOPE_CONTAINER_H
 
 
-#include "applauncher.h"
+#include "libertine-scope/applauncher.h"
 #include <string>
 #include <vector>
 
 
 /**
- * A Libertine container.
+ * A Libertine container proxy.
  *
  * A Libertine container is really just a named collection of applications.
  *

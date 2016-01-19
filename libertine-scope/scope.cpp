@@ -13,12 +13,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "scope.h"
+#include "libertine-scope/scope.h"
 
-#include <iostream>
+#include "libertine-scope/preview.h"
+#include "libertine-scope/query.h"
 #include <localization.h>
-#include "preview.h"
-#include "query.h"
 #include <sstream>
 #include <unity/scopes/ActivationResponse.h>
 #include <url-dispatcher.h>
@@ -33,7 +32,7 @@ namespace
  * @todo move this class into its own source file.
  */
 class ScopeActivation
-: public unity::scopes::ActivationQueryBase
+: public usc::ActivationQueryBase
 {
 public:
   ScopeActivation(usc::Result const& result,
@@ -41,31 +40,32 @@ public:
   : ActivationQueryBase(result, metadata)
   { }
 
-  unity::scopes::ActivationResponse
+  usc::ActivationResponse
   activate() override
   {
-    return unity::scopes::ActivationResponse(status);
+    return usc::ActivationResponse(status);
   }
 
-  unity::scopes::ActivationResponse::Status status = unity::scopes::ActivationResponse::Status::NotHandled;
+  usc::ActivationResponse::Status status = usc::ActivationResponse::Status::NotHandled;
 };
 
 } // anonymous namespace
 
 
+Scope::
+Scope(Libertine::Factory const& libertine_factory)
+: libertine_factory_(libertine_factory)
+{
+}
+
+
 void Scope::
 start(std::string const&)
 {
-  std::cerr << "==smw> " << __PRETTY_FUNCTION__ << "() begins\n";
   setlocale(LC_ALL, "");
-  try{
   std::string translation_directory = ScopeBase::scope_directory()
                                     + "/../share/locale/";
   bindtextdomain(GETTEXT_PACKAGE, translation_directory.c_str());
-  } catch (std::exception& ex) {
-    std::cerr << "==smw> " << __PRETTY_FUNCTION__ << "() exception caught: " << ex.what() << "\n";
-  }
-  std::cerr << "==smw> " << __PRETTY_FUNCTION__ << "() ends\n";
 }
 
 
@@ -79,7 +79,7 @@ usc::SearchQueryBase::UPtr Scope::
 search(usc::CannedQuery const&    query,
        usc::SearchMetadata const& metadata)
 {
-  return usc::SearchQueryBase::UPtr(new Query(query, metadata));
+  return usc::SearchQueryBase::UPtr(new Query(query, metadata, libertine_factory_));
 }
 
 

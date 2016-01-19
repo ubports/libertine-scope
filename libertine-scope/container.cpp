@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Canonical Ltd.
+ * Copyright 2015-2016 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3, as published by the
@@ -13,24 +13,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LIBERTINE_SCOPE_FAKE_CONTAINER_H_
-#define LIBERTINE_SCOPE_FAKE_CONTAINER_H_
-
-
 #include "libertine-scope/container.h"
 
 
-/**
- * A Fake Libertine container.
- */
-class FakeContainer
-: public Container
+Container::
+Container(std::string const& container_id)
+: id_(container_id)
+, name_(container_id)
+{ }
+
+
+Container::
+~Container()
+{ }
+
+
+std::string Container::
+id() const
 {
-public:
-  explicit
-  FakeContainer(std::string const& json);
+  return id_;
+}
 
-  ~FakeContainer();
-};
 
-#endif /* LIBERTINE_SCOPE_FAKE_CONTAINER_H_ */
+std::string Container::
+name() const
+{
+  return name_;
+}
+
+
+Container::AppLauncherList const& Container::
+app_launchers() const
+{
+  return app_launcher_list_;
+}
+

@@ -16,9 +16,11 @@
 #ifndef LIBERTINE_SCOPE_SCOPEFIXTURE_H_
 #define LIBERTINE_SCOPE_SCOPEFIXTURE_H_
 
-#include <iostream>
-#include "src/scope.h"
+#include <functional>
+#include "libertine-scope/scope.h"
 //#include <unity/scopes/testing/TypedScopeFixture.h>
+#include "tests/fake_container_json.h"
+#include "tests/fake_libertine.h"
 #include "tests/TypedScopeFixture.h"
 
 
@@ -38,15 +40,13 @@ template<>
     static char const*
     name()
     {
-      std::cerr << "==smw> " << __PRETTY_FUNCTION__ << "()\n";
       return "LibertineScope";
     }
 
     static std::shared_ptr<::Scope>
     construct()
     {
-      std::cerr << "==smw> " << __PRETTY_FUNCTION__ << "()\n";
-      return std::make_shared<::Scope>();
+      return std::make_shared<::Scope>(std::bind(FakeLibertine::make_fake, FAKE_CONTAINER_JSON));
     }
   };
 
