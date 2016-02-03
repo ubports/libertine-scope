@@ -1,5 +1,5 @@
 libertine-scope (1.0-0ubuntu1) UNRELEASED; urgency=low
 
-  * Initial release.
+  * initial release (lp: 1541417)
 
- -- Stephen M. Webb <stephen.webb@canonical.com>  Tue, 29 Dec 2015 19:42:14 -0500
+ -- Stephen M. Webb <stephen.webb@canonical.com>  Wed, 03 Feb 2016 19:42:14 -0500
