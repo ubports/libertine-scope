@@ -20,6 +20,7 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>
 #include <QtCore/QFileInfo>
+#include <QtGui/QImage>
 
 
 AppLauncher::
@@ -35,10 +36,22 @@ AppLauncher(std::string const& json_string)
   QJsonValue icons = obj["icons"];
   if (icons.isArray())
   {
+    int width = 0;
     for (auto const& icon: icons.toArray())
     {
-      icon_ = "file://" + icon.toString().toStdString();
-      break;
+      QString icon_file_name = icon.toString();
+      if (icon_file_name.endsWith(".svg", Qt::CaseInsensitive))
+      {
+        icon_ = "file://" + icon_file_name.toStdString();
+        break;
+      }
+
+      QImage image = QImage(icon_file_name);
+      if (image.width() > width)
+      {
+        icon_ = "file://" + icon_file_name.toStdString();
+        width = image.width();
+      }
     }
   }
 

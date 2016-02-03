@@ -25,6 +25,7 @@ include(GNUInstallDirs)
 find_package(PkgConfig)
 find_package(Intltool)
 find_package(Qt5Core REQUIRED)
+find_package(Qt5Gui REQUIRED)
 
 pkg_check_modules(SCOPE libunity-scopes>=0.6.0 REQUIRED)
 
