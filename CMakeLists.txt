@@ -1,5 +1,7 @@
-project(libertine-scope CXX)
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.0)
+project(libertine-scope
+        VERSION 1.0
+        LANGUAGES CXX)
 
 # We require at least g++ 4.9, to avoid ABI breakage with earlier versions.
 set(cxx_version_required 4.9)
@@ -72,3 +74,7 @@ add_custom_target(check
                  ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure
 )
 
+set(ARCHIVE_NAME ${CMAKE_PROJECT_NAME}-${PROJECT_VERSION})
+add_custom_target(dist
+  COMMAND bzr export --root=${ARCHIVE_NAME} ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
