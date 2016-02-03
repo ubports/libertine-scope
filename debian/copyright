@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: libertine-scope
-Source: <url://example.com>
+Source: https://launchpad.net/libertine-scope
 
 Files: *
 Copyright: 2015-2016 Canonical Ltd.

@@ -1,8 +1,5 @@
 #!/usr/bin/make -f 
 
 %:
-	dh $@ 
-
-
-
+	dh $@ --with translations
 
