@@ -12,6 +12,9 @@ Build-Depends: cmake (>= 3),
                pkg-config,
                qtbase5-dev
 Standards-Version: 3.9.6
+Homepage: https://launchpad.net/libertine-scope
+Vcs-Bzr: https://code.launchpad.net/~libertine-team/libertine-scope/devel
+Vcs-Browser: https://bazaar.launchpad.net/~libertine-team/libertine/devel/files
 
 Package: libertine-scope
 Architecture: any
