@@ -1,7 +1,8 @@
 Source: libertine-scope
 Section: x11
 Priority: optional
-Maintainer: Stephen M. Webb <stephen.webb@canonical.com>
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Stephen M. Webb <stephen.webb@canonical.com>
 Build-Depends: cmake (>= 3),
                cmake-extras,
                debhelper (>= 9),
