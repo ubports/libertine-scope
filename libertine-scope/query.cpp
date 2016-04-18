@@ -22,6 +22,9 @@
 #include <unity/scopes/CategoryRenderer.h>
 #include <unity/scopes/QueryBase.h>
 #include <unity/scopes/SearchReply.h>
+#include <QString>
+#include <QRegExp>
+
 
 namespace usc = unity::scopes;
 
@@ -82,20 +85,19 @@ cancelled()
 void Query::
 run(usc::SearchReplyProxy const& reply)
 {
-  usc::CannedQuery const& query(usc::SearchQueryBase::query());
-  std::string query_string = query.query_string();
-
+  QRegExp re(QString::fromStdString(query().query_string()), Qt::CaseInsensitive);
   Libertine::UPtr libertine = libertine_factory_();
+
   for (auto const& container: libertine->get_container_list())
   {
     auto category = reply->register_category(container->id(),
                                              container->name(),
                                              "Application",
                                              usc::CategoryRenderer(CATEGORY_APPS_DISPLAY));
-
     for (auto const& app: container->app_launchers())
     {
-      if (app.no_display())
+      if (app.no_display() ||
+          !(re.isEmpty() || QString::fromStdString(app.name()).contains(re)))
       {
         continue;
       }
@@ -112,3 +114,4 @@ run(usc::SearchReplyProxy const& reply)
     }
   }
 }
+
