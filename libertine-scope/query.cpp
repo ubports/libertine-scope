@@ -96,12 +96,15 @@ run(usc::SearchReplyProxy const& reply)
     for (auto const& app: container->app_launchers())
     {
       if (app.no_display())
+      {
         continue;
+      }
 
       usc::CategorisedResult result(category);
       result.set_title(app.name());
       result.set_art(app.icon());
       result.set_uri(app_uri(*container, app));
+      result["desktop_file"] = app.desktop_file();
       if (!reply->push(result))
       {
         break;
@@ -109,4 +112,3 @@ run(usc::SearchReplyProxy const& reply)
     }
   }
 }
-

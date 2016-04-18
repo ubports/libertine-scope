@@ -54,4 +54,3 @@ TEST_F(ScopeFixture, surfacing_query)
   SearchReplyProxy search_reply_proxy(&reply, [](unity::scopes::SearchReply*) {});
   search_query->run(search_reply_proxy);
 }
-

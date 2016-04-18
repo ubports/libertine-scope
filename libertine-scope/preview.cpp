@@ -13,16 +13,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "libertine-scope/preview.h"
+#include "libertine-scope/app_description.h"
 
 #include <unity/scopes/PreviewReply.h>
 #include <unity/scopes/Variant.h>
 #include <unity/scopes/VariantBuilder.h>
+#include <unity/scopes/ActionMetadata.h>
+#include <unity/scopes/Result.h>
 
+namespace usc = unity::scopes;
 
 Preview::
-Preview(unity::scopes::Result const&         result,
-        unity::scopes::ActionMetadata const& metadata)
+Preview(usc::Result const&         result,
+        usc::ActionMetadata const& metadata)
 : PreviewQueryBase(result, metadata)
 {
 }
@@ -41,22 +46,24 @@ cancelled()
 
 
 void Preview::
-run(unity::scopes::PreviewReplyProxy const& reply)
+run(usc::PreviewReplyProxy const& reply)
 {
-  reply->push("description", unity::scopes::Variant("A Description"));
+  usc::PreviewWidget header("hdr", "header");
+  header.add_attribute_mapping("title", "title");
+  header.add_attribute_mapping("mascot", "art");
 
-  unity::scopes::PreviewWidget image_widget("myimage", "image");
-  image_widget.add_attribute_mapping("source", "art");
-
-  unity::scopes::PreviewWidget buttons("buttons", "actions");
-  unity::scopes::VariantBuilder vb;
+  usc::PreviewWidget buttons("buttons", "actions");
+  usc::VariantBuilder vb;
   vb.add_tuple({
-    {"id",    unity::scopes::Variant("open")},
-    {"label", unity::scopes::Variant("Open")},
+    {"id",    usc::Variant("open")},
+    {"label", usc::Variant("Open")},
   });
   buttons.add_attribute_value("actions", vb.end());
 
-  unity::scopes::PreviewWidgetList widgets{ image_widget, buttons };
+  auto desktop_file_name = result()["desktop_file"].get_string();
+  usc::PreviewWidget desc("desc", "text");
+  desc.add_attribute_value("text", AppDescription(desktop_file_name, action_metadata().locale()).description());
+
+  usc::PreviewWidgetList widgets{ header, desc, buttons };
   reply->push(widgets);
 }
-

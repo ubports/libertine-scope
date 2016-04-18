@@ -6,7 +6,11 @@ add_subdirectory(${GMOCK_SOURCE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/gmock")
 add_executable(libertine_scope_tests
   fake_container.cpp
   fake_libertine.cpp
+
+  # tests
   test_scope.cpp
+  test_app_description.cpp
+  test_preview.cpp
 )
 
 target_link_libraries(libertine_scope_tests
@@ -16,6 +20,8 @@ target_link_libraries(libertine_scope_tests
   gmock_main
 )
 
-add_test(test_scope
-  libertine_scope_tests
-)
+add_test(test_scope libertine_scope_tests)
+add_test(test_app_description libertine_scope_tests)
+add_test(test_preview libertine_scope_tests)
+
+execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/tests/data/ ${CMAKE_CURRENT_BINARY_DIR}/data)
