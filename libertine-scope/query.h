@@ -20,6 +20,8 @@
 #include <unity/scopes/ReplyProxyFwd.h>
 #include <unity/scopes/SearchQueryBase.h>
 
+class QStringList;
+
 
 /**
  * Engine to run a specific scope query.
@@ -40,7 +42,12 @@ public:
     void
     run(unity::scopes::SearchReplyProxy const& reply) override;
 
+    // Overriding base class method to add ability to test
+    virtual unity::scopes::VariantMap settings() const;
+
 private:
+    QStringList blacklist() const;
+
     Libertine::Factory libertine_factory_;
 };
 

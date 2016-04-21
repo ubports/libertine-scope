@@ -136,4 +136,51 @@ TEST_F(TestQueryFixture, haltsFurtherPushesAfterFailedPush)
   query.run(proxy);
 }
 
+
+// Query class with faked out Settings
+class QueryWithFakeSettings : public Query
+{
+public:
+  QueryWithFakeSettings(unity::scopes::CannedQuery const& query,
+        unity::scopes::SearchMetadata const&  metadata,
+        Libertine::Factory const&   libertine_factory)
+  : Query(query, metadata, libertine_factory)
+    , settings_()
+  {
+  }
+
+  unity::scopes::VariantMap settings() const override
+  {
+    return settings_;
+  }
+
+  unity::scopes::VariantMap settings_;
+};
+
+
+TEST_F(TestQueryFixture, ignoresAnyBlacklistedApps)
+{
+  expect_registry();
+  expect_push("Library", "", "appid://fake/library/0.0");
+
+  QueryWithFakeSettings query(canned_query, metadata, []() {
+    return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
+  });
+  query.settings_["blacklist"] = "LibreOffice;Linux";
+  query.run(proxy);
+}
+
+
+TEST_F(TestQueryFixture, stripsQuotationMarksFromBlacklist)
+{
+  expect_registry();
+  expect_push("Library", "", "appid://fake/library/0.0");
+
+  QueryWithFakeSettings query(canned_query, metadata, []() {
+    return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
+  });
+  query.settings_["blacklist"] = "\"LibreOffice\"";
+  query.run(proxy);
+}
+
 } // anonymous namespace

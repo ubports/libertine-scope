@@ -23,6 +23,7 @@
 #include <unity/scopes/QueryBase.h>
 #include <unity/scopes/SearchReply.h>
 #include <QString>
+#include <QStringList>
 #include <QRegExp>
 
 
@@ -82,9 +83,30 @@ cancelled()
 }
 
 
+unity::scopes::VariantMap
+Query::settings() const
+{
+  return SearchQueryBase::settings();
+}
+
+QStringList
+Query::blacklist() const
+{
+  QStringList blacklistedApps;
+  auto blacklist = settings()["blacklist"];
+  if (!blacklist.is_null()) {
+    blacklistedApps = QString::fromStdString(blacklist.get_string())
+        .remove("\"")
+        .split(";", QString::SkipEmptyParts);
+  }
+  return blacklistedApps;
+}
+
+
 void Query::
 run(usc::SearchReplyProxy const& reply)
 {
+  auto blacklistedApps = blacklist();
   QRegExp re(QString::fromStdString(query().query_string()), Qt::CaseInsensitive);
   Libertine::UPtr libertine = libertine_factory_();
 
@@ -96,8 +118,9 @@ run(usc::SearchReplyProxy const& reply)
                                              usc::CategoryRenderer(CATEGORY_APPS_DISPLAY));
     for (auto const& app: container->app_launchers())
     {
-      if (app.no_display() ||
-          !(re.isEmpty() || QString::fromStdString(app.name()).contains(re)))
+      if (app.no_display()
+          || !(re.isEmpty() || QString::fromStdString(app.name()).contains(re))
+          || blacklistedApps.contains(QString::fromStdString(app.name())))
       {
         continue;
       }
