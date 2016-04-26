@@ -34,8 +34,8 @@ public:
   unity::scopes::Variant description() const;
 
 private:
-  const std::string& desktop_file_;
-  const std::string& language_;
+  std::string desktop_file_;
+  std::string language_;
 };
 
 #endif

@@ -21,6 +21,8 @@ target_link_libraries(libertine_scope_tests
   gmock_main
 )
 
+file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 add_test(test_scope libertine_scope_tests)
 add_test(test_app_description libertine_scope_tests)
 add_test(test_preview libertine_scope_tests)
