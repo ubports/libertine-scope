@@ -24,9 +24,28 @@
 #include <QtCore/QString>
 
 
+class TestAppLauncher : public AppLauncher
+{
+public:
+  TestAppLauncher(const std::string& json)
+    :AppLauncher()
+  {
+    auto doc = QJsonDocument::fromJson(QByteArray::fromStdString(json));
+    auto obj = doc.object();
+    name_ = obj["name"].toString().toStdString();
+    if (obj["icons"].isArray())
+    {
+      icon_ = obj["icons"].toArray()[0].toString().toStdString();
+    }
+    description_ = obj["description"].toString().toStdString();
+    uri_ = obj["uri"].toString().toStdString();
+  }
+};
+
+
 FakeContainer::
 FakeContainer(std::string const& json_string)
-: Container("fake")
+: Container("fakeId", "fakeName")
 {
   QJsonDocument json = QJsonDocument::fromJson(QByteArray::fromStdString(json_string), nullptr);
   QJsonObject object = json.object();
@@ -41,7 +60,7 @@ FakeContainer(std::string const& json_string)
       for (auto const& app: v.toArray())
       {
         auto json = QJsonDocument(app.toObject()).toJson().toStdString();
-        app_launcher_list_.emplace_back(AppLauncher(json));
+        app_launcher_list_.emplace_back(TestAppLauncher(json));
       }
     }
   }

@@ -30,31 +30,31 @@ public:
    * Constructs an AppLaunchder object from a JSON string.
    */
   explicit
-  AppLauncher(std::string const& json_string);
+  AppLauncher(const std::string& app_id, const std::string& container_name);
 
   virtual
   ~AppLauncher();
 
   virtual std::string
-  id() const;
-
-  virtual std::string
   name() const;
-
-  virtual bool
-  no_display() const;
 
   virtual std::string
   icon() const;
 
   virtual std::string
-  desktop_file() const;
+  description() const;
 
-private:
+  virtual std::string
+  uri() const;
+
+protected:
+  explicit
+  AppLauncher();
+
   std::string     name_;
-  bool            no_display_;
   std::string     icon_;
-  std::string     desktop_file_;
+  std::string     uri_;
+  std::string     description_;
 };
 
 #endif /* LIBERTINE_SCOPE_APPLAUNCHER_H */

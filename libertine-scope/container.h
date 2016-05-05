@@ -43,7 +43,7 @@ public:
    * launcher .desktop files and their icons.
    */
   explicit
-  Container(std::string const& container_id);
+  Container(std::string const& container_id, std::string const& container_name);
 
   virtual
   ~Container() = 0;

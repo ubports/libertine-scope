@@ -30,12 +30,16 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 
 pkg_check_modules(SCOPE libunity-scopes>=0.6.0 REQUIRED)
+pkg_check_modules(UAL ubuntu-app-launch-2>=0.5.0 REQUIRED)
+pkg_check_modules(LIBERTINE libertine REQUIRED)
 
 # Add our dependencies to the include paths
 include_directories(
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/libertine-scope
   ${SCOPE_INCLUDE_DIRS}
+  ${UAL_INCLUDE_DIRS}
+  ${LIBERTINE_INCLUDE_DIRS}
 )
 
 # Important project paths

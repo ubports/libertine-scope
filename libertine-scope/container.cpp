@@ -13,13 +13,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "libertine-scope/container.h"
 
 
 Container::
-Container(std::string const& container_id)
+Container(std::string const& container_id, std::string const& container_name)
 : id_(container_id)
-, name_(container_id)
+, name_(container_name)
 { }
 
 

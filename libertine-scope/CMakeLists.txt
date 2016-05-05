@@ -17,6 +17,8 @@ include_directories(${URL_DISPATCHER_INCLUDE_DIRS})
 
 target_link_libraries(scope
   ${SCOPE_LDFLAGS}
+  ${UAL_LDFLAGS}
+  ${LIBERTINE_LDFLAGS}
   Qt5::Core
   Qt5::Gui
   ${URL_DISPATCHER_LIBRARIES}

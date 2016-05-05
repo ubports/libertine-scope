@@ -28,7 +28,7 @@ class FakeContainer
 {
 public:
   explicit
-  FakeContainer(std::string const& json);
+  FakeContainer(std::string const& container_id);
 
   ~FakeContainer();
 };

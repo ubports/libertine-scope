@@ -13,56 +13,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "libertine-scope/libertine.h"
-
 #include "libertine-scope/container.h"
-#include <QtCore/QJsonArray>
-#include <QtCore/QJsonDocument>
-#include <QtCore/QJsonObject>
-#include <QtCore/QJsonValue>
-#include <QtCore/QProcess>
-#include <QtCore/QString>
-
+#include <liblibertine/libertine.h>
+#include <glib.h>
 
 namespace
 {
 
 /**
- * A real Libertine Container created by using the Libertine tools.
+ * A real Libertine Container created by querying liblibertine.
  */
 class LibertineContainer
 : public Container
 {
 public:
-  LibertineContainer(std::string const& container_id)
-  : Container(container_id)
+  LibertineContainer(std::string const& container_id, std::string const& container_name)
+  : Container(container_id, container_name)
   {
-    QProcess libertine_container_manager;
-    libertine_container_manager.start("libertine-container-manager",
-                                      QStringList() <<  "list-apps"
-                                                    << "--id"
-                                                    << QString::fromStdString(id_)
-                                                    << "--json");
-    if (libertine_container_manager.waitForFinished())
+    auto apps = libertine_list_apps_for_container(container_id.c_str());
+    for (auto i = 0; apps[i] != nullptr; ++i)
     {
-      QJsonDocument json = QJsonDocument::fromJson(libertine_container_manager.readAllStandardOutput());
-      QJsonObject object = json.object();
-      QJsonValue name = object["name"];
-      if (name != QJsonValue::Undefined)
+      try
       {
-        name_ = name.toString().toStdString();
-
-        QJsonValue v = object["app_launchers"];
-        if (v != QJsonValue::Undefined)
-        {
-          for (auto const& app: v.toArray())
-          {
-            auto json = QJsonDocument(app.toObject()).toJson().toStdString();
-            app_launcher_list_.emplace_back(AppLauncher(json));
-          }
-        }
+        app_launcher_list_.emplace_back(AppLauncher(apps[i], container_id));
+      }
+      catch(std::runtime_error)
+      {
+        /*
+         * U-A-L will throw if an application cannot be displayed
+         * for any reason. Ignore and continue.
+         */
       }
     }
+    g_strfreev(apps);
   }
 
   ~LibertineContainer()
@@ -75,17 +60,14 @@ class LibertineCli
 public:
   LibertineCli()
   {
-    QProcess libertine_container_manager;
-    libertine_container_manager.start("libertine-container-manager",
-                                      QStringList() <<  "list");
-    if (libertine_container_manager.waitForFinished())
+    auto container_ids = libertine_list_containers();
+    for (auto i = 0; container_ids[i] != nullptr; ++i)
     {
-      QString container_id_list(libertine_container_manager.readAllStandardOutput());
-      for (auto const& id: container_id_list.split("\n", QString::SkipEmptyParts))
-      {
-        container_list_.emplace_back(new LibertineContainer(id.toStdString()));
-      }
+      auto name = libertine_container_name(container_ids[i]);
+      container_list_.emplace_back(new LibertineContainer(container_ids[i], name));
+      g_free(name);
     }
+    g_strfreev(container_ids);
   }
 
   Libertine::ContainerList const&

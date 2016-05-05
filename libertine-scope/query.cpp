@@ -13,11 +13,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "libertine-scope/query.h"
 
-#include "libertine-scope/applauncher.h"
+#include "libertine-scope/query.h"
 #include "libertine-scope/container.h"
-#include "libertine-scope/libertine.h"
 #include <unity/scopes/CategorisedResult.h>
 #include <unity/scopes/CategoryRenderer.h>
 #include <unity/scopes/QueryBase.h>
@@ -48,21 +46,12 @@ std::string const CATEGORY_APPS_DISPLAY = R"(
             "title" : "title",
             "art" : {
                 "field": "art",
-                "fill-mode": "fit"
+                "fill-mode": "fit",
+                "fallback": "image://theme/placeholder-app-icon"
             }
         }
     }
 )";
-
-
-/**
- * Generates a ubuntu-application-launcher URI for a contained desktop file.
- */
-static std::string
-app_uri(Container const& container, AppLauncher const& app)
-{
-  return "appid://" + container.id() + "/" + app.id() + "/0.0";
-}
 
 } // anonymous namespace
 
@@ -88,6 +77,7 @@ Query::settings() const
 {
   return SearchQueryBase::settings();
 }
+
 
 QStringList
 Query::blacklist() const
@@ -118,8 +108,7 @@ run(usc::SearchReplyProxy const& reply)
                                              usc::CategoryRenderer(CATEGORY_APPS_DISPLAY));
     for (auto const& app: container->app_launchers())
     {
-      if (app.no_display()
-          || !(re.isEmpty() || QString::fromStdString(app.name()).contains(re))
+      if (!(re.isEmpty() || QString::fromStdString(app.name()).contains(re))
           || blacklistedApps.contains(QString::fromStdString(app.name())))
       {
         continue;
@@ -128,8 +117,8 @@ run(usc::SearchReplyProxy const& reply)
       usc::CategorisedResult result(category);
       result.set_title(app.name());
       result.set_art(app.icon());
-      result.set_uri(app_uri(*container, app));
-      result["desktop_file"] = app.desktop_file();
+      result.set_uri(app.uri());
+      result["description"] = app.description();
       if (!reply->push(result))
       {
         break;

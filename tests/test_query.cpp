@@ -34,15 +34,21 @@ const std::string LIBERTINE_OUTPUT_WITH_APPS = R"(
     "app_launchers": [{
       "name": "LibreOffice",
       "no_display": false,
-      "desktop_file_name": "/link/to/libreoffice.desktop"
+      "uri": "appid://fake/libreoffice/0.0",
+      "icons": ["file:///lo.png"],
+      "description": "libreoffice!"
     }, {
       "name": "Linux",
       "no_display": true,
-      "desktop_file_name": "/link/to/linux.desktop"
+      "uri": "appid://fake/linux/0.0",
+      "icons": ["file:///nix.png"],
+      "description": "linux!"
     }, {
       "name": "Library",
       "no_display": false,
-      "desktop_file_name": "/link/to/library.desktop"
+      "uri": "appid://fake/library/0.0",
+      "icons": ["file:///lib.png"],
+      "description": "library!"
     }]
   }
 )";
@@ -60,11 +66,12 @@ public:
 };
 
 
-MATCHER_P3(ResultPropertiesMatch, title, art, uri, "")
+MATCHER_P4(ResultPropertiesMatch, title, art, description, uri, "")
 {
-  return arg.contains("title") && arg.contains("art") && arg.contains("uri") &&
+  return arg.contains("title") && arg.contains("art") && arg.contains("description") && arg.contains("uri") &&
       arg["title"] == unity::scopes::Variant(title) &&
       arg["art"] == unity::scopes::Variant(art) &&
+      arg["description"] == unity::scopes::Variant(description) &&
       arg["uri"] == unity::scopes::Variant(uri);
 }
 
@@ -77,18 +84,33 @@ public:
     , canned_query("libertine-scope")
     , reply()
     , proxy(&reply, [](unity::scopes::SearchReply*) {})
-    , category(std::make_shared<FakeCategory>("fake", "fake-container", "Application", unity::scopes::CategoryRenderer()))
+    , category(std::make_shared<FakeCategory>("fakeId", "fake-container", "Application", unity::scopes::CategoryRenderer()))
   {
   }
 
   void expect_registry()
   {
-    EXPECT_CALL(reply, register_category("fake", "fake-container", "Application", testing::_)).WillOnce(testing::Return(category));
+    EXPECT_CALL(reply, register_category("fakeId", "fake-container", "Application", testing::_)).WillOnce(testing::Return(category));
   }
 
-  void expect_push(std::string title, std::string art, std::string appId, bool success = true)
+  void expect_push(std::string title, std::string art, std::string description, std::string appId, bool success = true)
   {
-    EXPECT_CALL(reply, push(testing::Matcher<unity::scopes::CategorisedResult const&>(ResultPropertiesMatch(title, art, appId)))).WillOnce(testing::Return(success));
+    EXPECT_CALL(reply, push(testing::Matcher<unity::scopes::CategorisedResult const&>(ResultPropertiesMatch(title, art, description, appId)))).WillOnce(testing::Return(success));
+  }
+
+  void expect_push_libreoffice(bool success = true)
+  {
+    expect_push("LibreOffice", "file:///lo.png", "libreoffice!", "appid://fake/libreoffice/0.0", success);
+  }
+
+  void expect_push_library(bool success = true)
+  {
+    expect_push("Library", "file:///lib.png", "library!", "appid://fake/library/0.0", success);
+  }
+
+  void expect_push_linux(bool success = true)
+  {
+    expect_push("Linux", "file:///nix.png", "linux!", "appid://fake/linux/0.0", success);
   }
 
   unity::scopes::SearchMetadata metadata;
@@ -102,8 +124,9 @@ public:
 TEST_F(TestQueryFixture, returnsAllDisplayableAppsWithoutFilters)
 {
   expect_registry();
-  expect_push("LibreOffice", "", "appid://fake/libreoffice/0.0");
-  expect_push("Library", "", "appid://fake/library/0.0");
+  expect_push_libreoffice();
+  expect_push_linux();
+  expect_push_library();
 
   Query query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
@@ -115,7 +138,7 @@ TEST_F(TestQueryFixture, returnsAllDisplayableAppsWithoutFilters)
 TEST_F(TestQueryFixture, returnsRegularExpressionFilteredListOfApps)
 {
   expect_registry();
-  expect_push("LibreOffice", "", "appid://fake/libreoffice/0.0");
+  expect_push_libreoffice();
   canned_query.set_query_string("li.*office");
 
   Query query(canned_query, metadata, []() {
@@ -128,7 +151,7 @@ TEST_F(TestQueryFixture, returnsRegularExpressionFilteredListOfApps)
 TEST_F(TestQueryFixture, haltsFurtherPushesAfterFailedPush)
 {
   expect_registry();
-  expect_push("LibreOffice", "", "appid://fake/libreoffice/0.0", false);
+  expect_push_libreoffice(false);
 
   Query query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
@@ -161,7 +184,7 @@ public:
 TEST_F(TestQueryFixture, ignoresAnyBlacklistedApps)
 {
   expect_registry();
-  expect_push("Library", "", "appid://fake/library/0.0");
+  expect_push_library();
 
   QueryWithFakeSettings query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
@@ -174,7 +197,8 @@ TEST_F(TestQueryFixture, ignoresAnyBlacklistedApps)
 TEST_F(TestQueryFixture, stripsQuotationMarksFromBlacklist)
 {
   expect_registry();
-  expect_push("Library", "", "appid://fake/library/0.0");
+  expect_push_linux();
+  expect_push_library();
 
   QueryWithFakeSettings query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);

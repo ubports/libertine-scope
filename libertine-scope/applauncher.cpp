@@ -13,50 +13,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "libertine-scope/applauncher.h"
 
-#include <QtCore/QByteArray>
-#include <QtCore/QJsonArray>
-#include <QtCore/QJsonDocument>
-#include <QtCore/QJsonObject>
-#include <QtCore/QFileInfo>
-#include <QtGui/QImage>
+#include "libertine-scope/applauncher.h"
+#include <ubuntu-app-launch/registry.h>
 
 
 AppLauncher::
-AppLauncher(std::string const& json_string)
+AppLauncher(const std::string& app_id, const std::string& container_id)
 {
-  auto doc = QJsonDocument::fromJson(QByteArray::fromStdString(json_string));
-  auto obj = doc.object();
-
-  name_ = obj["name"].toString().toStdString();
-
-  no_display_ = obj["no_display"].toBool();
-
-  QJsonValue icons = obj["icons"];
-  if (icons.isArray())
-  {
-    int width = 0;
-    for (auto const& icon: icons.toArray())
-    {
-      QString icon_file_name = icon.toString();
-      if (icon_file_name.endsWith(".svg", Qt::CaseInsensitive))
-      {
-        icon_ = "file://" + icon_file_name.toStdString();
-        break;
-      }
-
-      QImage image = QImage(icon_file_name);
-      if (image.width() > width)
-      {
-        icon_ = "file://" + icon_file_name.toStdString();
-        width = image.width();
-      }
-    }
-  }
-
-  desktop_file_ = obj["desktop_file_name"].toString().toStdString();
+  auto appId = ubuntu::app_launch::AppID::parse(app_id);
+  auto app = ubuntu::app_launch::Application::create(appId, ubuntu::app_launch::Registry::getDefault());
+  name_ = app->info()->name().value();
+  icon_ = app->info()->iconPath().value();
+  description_ = app->info()->description().value();
+  uri_ = "appid://" + container_id + "/" + appId.appname.value() + "/0.0";
 }
+
+
+AppLauncher::
+AppLauncher() { /* empty */ }
 
 
 AppLauncher::
@@ -66,24 +41,9 @@ AppLauncher::
 
 
 std::string AppLauncher::
-id() const
-{
-  QFileInfo fi(QString::fromStdString(desktop_file_));
-  return fi.baseName().toStdString();
-}
-
-
-std::string AppLauncher::
 name() const
 {
   return name_;
-}
-
-
-bool AppLauncher::
-no_display() const
-{
-  return no_display_;
 }
 
 
@@ -95,8 +55,15 @@ icon() const
 
 
 std::string AppLauncher::
-desktop_file() const
+description() const
 {
-  return desktop_file_;
+  return description_;
+}
+
+
+std::string AppLauncher::
+uri() const
+{
+  return uri_;
 }
 

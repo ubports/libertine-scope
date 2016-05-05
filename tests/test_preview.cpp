@@ -28,7 +28,6 @@
 TEST(TestPreview, pushesWidgetsWithAppInformation)
 {
   unity::scopes::testing::Result result;
-  result["desktop_file"] = unity::scopes::Variant(QString("%1/data/Full.desktop").arg(QDir::currentPath()).toStdString());
   unity::scopes::ActionMetadata metadata("en_US", "phone");
 
   std::unique_ptr<unity::scopes::PreviewWidgetList> list(new unity::scopes::PreviewWidgetList());
@@ -51,12 +50,12 @@ TEST(TestPreview, pushesWidgetsWithAppInformation)
   list->pop_front();
   auto desc = list->front();
   EXPECT_EQ("desc", desc.id());
-  EXPECT_EQ("This session logs you into Matchbox", desc.attribute_values()["text"].get_string());
 
   list->pop_front();
   auto buttons = list->front();
   EXPECT_EQ("buttons", buttons.id());
   EXPECT_EQ("actions", buttons.widget_type());
+
   auto buttons_actions = buttons.attribute_values()["actions"].get_array();
   ASSERT_EQ(1, buttons_actions.size());
   EXPECT_EQ("open", buttons_actions[0].get_dict()["id"].get_string());

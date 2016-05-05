@@ -15,8 +15,6 @@
  */
 
 #include "libertine-scope/preview.h"
-#include "libertine-scope/app_description.h"
-
 #include <unity/scopes/PreviewReply.h>
 #include <unity/scopes/Variant.h>
 #include <unity/scopes/VariantBuilder.h>
@@ -51,6 +49,7 @@ run(usc::PreviewReplyProxy const& reply)
   usc::PreviewWidget header("hdr", "header");
   header.add_attribute_mapping("title", "title");
   header.add_attribute_mapping("mascot", "art");
+  header.add_attribute_value("fallback", usc::Variant("image://theme/placeholder-app-icon"));
 
   usc::PreviewWidget buttons("buttons", "actions");
   usc::VariantBuilder vb;
@@ -60,9 +59,8 @@ run(usc::PreviewReplyProxy const& reply)
   });
   buttons.add_attribute_value("actions", vb.end());
 
-  auto desktop_file_name = result()["desktop_file"].get_string();
   usc::PreviewWidget desc("desc", "text");
-  desc.add_attribute_value("text", AppDescription(desktop_file_name, action_metadata().locale()).description());
+  desc.add_attribute_mapping("text", "description");
 
   usc::PreviewWidgetList widgets{ header, desc, buttons };
   reply->push(widgets);
