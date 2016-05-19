@@ -1,6 +1,16 @@
 {
-    "template": "unconfined",
+    "template": "ubuntu-scope-network",
     "policy_groups": [],
-    "policy_version": 1.3
+    "policy_version": 1.3,
+    "read_path": [
+        "@{HOME}/.local/share/libertine/",
+        "@{HOME}/.cache/libertine-container/",
+        "/opt/click.ubuntu.com/com.ubuntu.puritine/",
+        "/custom/click/com.ubuntu.puritine/",
+        "/{dev,run}/shm/lttng-ust-wait-5*"
+    ],
+    "write_path": [
+        "/{dev,run}/shm/lttng-ust-wait-5*"
+     ]
 }
 
