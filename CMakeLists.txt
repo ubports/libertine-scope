@@ -42,11 +42,13 @@ include_directories(
   ${LIBERTINE_INCLUDE_DIRS}
 )
 
+set(PACKAGE_NAME "libertine-scope.canonical")
+set(APP ${PROJECT})
+
 # Important project paths
 set(SCOPE_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/unity-scopes/libertine-scope/)
 set(SCOPE_NAME "libertine-scope")
 set(GETTEXT_PACKAGE "${SCOPE_NAME}")
-set(PACKAGE_NAME "libertine-scope.canonical")
 
 # If we need to refer to the scope's name or package in code, these definitions will help
 add_definitions(-DPACKAGE_NAME="${PACKAGE_NAME}")

@@ -27,7 +27,7 @@ target_link_libraries(scope
 
 set_target_properties(scope
   PROPERTIES
-    OUTPUT_NAME "${SCOPE_NAME}"
+    OUTPUT_NAME "${PACKAGE_NAME}_${SCOPE_NAME}"
 )
 
 install(TARGETS scope
