@@ -1,3 +1,23 @@
+libertine-scope (1.1+16.04.20160506-0ubuntu1) xenial; urgency=medium
+
+  [ Chris Townsend ]
+  * Use the "unconfined" apparmor template to allow the scope to access user
+    data (lp: #1558738).
+
+  [ Larry Price ]
+  * Redesigned preview pane with reasonably-sized image, title, and description.
+  * Filtered app launchers based on a user-input regular expression.
+  * Added a setting for listing app launcher names which should be excluded
+    from the scope view.
+
+  [ Stephen M. Webb ]
+  * Added internationalization support.
+
+  [ CI Train Bot ]
+  * No-change rebuild.
+
+ -- Stephen M. Webb <stephen.webb@canonical.com>  Fri, 06 May 2016 16:16:35 +0000
+
 libertine-scope (1.0-0ubuntu1) xenial; urgency=low
 
   * Initial release (lp: #1541417).
