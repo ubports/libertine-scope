@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(libertine-scope
-        VERSION 1.0
+        VERSION 1.1
         LANGUAGES CXX)
 
 # We require at least g++ 4.9, to avoid ABI breakage with earlier versions.
@@ -42,7 +42,7 @@ include_directories(
   ${LIBERTINE_INCLUDE_DIRS}
 )
 
-set(PACKAGE_NAME "libertine-scope.canonical")
+set(PACKAGE_NAME "libertine-scope.ubuntu")
 set(APP ${PROJECT})
 
 # Important project paths

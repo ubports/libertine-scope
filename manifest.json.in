@@ -4,12 +4,12 @@
     "framework": "ubuntu-sdk-15.04.3",
     "hooks": {
         "libertine-scope": {
-            "apparmor": "libertine-scope.apparmor",
-            "scope": "libertine-scope"
+            "apparmor": "@SCOPE_NAME@.apparmor",
+            "scope": "@SCOPE_NAME@"
         }
     },
-    "maintainer": "Stephen M. Webb <stephen.webb@canonical.com>",
-    "name": "libertine-scope.canonical",
-    "title": "libertine-scope",
-    "version": "0.1"
+    "maintainer": "Ubuntu Libertine Team <libertine-team@lists.launchpad.net>",
+    "name": "@PACKAGE_NAME@",
+    "title": "@SCOPE_NAME@",
+    "version": "@PROJECT_VERSION@"
 }
