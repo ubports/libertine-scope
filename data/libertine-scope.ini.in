@@ -5,7 +5,3 @@ Art=screenshot.png
 Author=The Canonical Libertine Team <libertine-team@lists.launchpad.net>
 Icon=icon.png
 Keywords=apps
-
-[Appearance]
-PageHeader.Logo=logo.png
-

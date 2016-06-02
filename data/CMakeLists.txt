@@ -23,20 +23,10 @@ install(
     ${SCOPE_INSTALL_DIR}
 )
 
-# Put the logo file in the build directory next to the scope
-# .ini file so that the test tools can find it.
-configure_file(
-  "logo.png"
-  "${CMAKE_CURRENT_BINARY_DIR}/logo.png"
-  @ONLY
-  COPYONLY
-)
-
 # Install the scope images
 install(
   FILES
     "icon.png"
-    "logo.png"
   DESTINATION
     ${SCOPE_INSTALL_DIR}
 )
