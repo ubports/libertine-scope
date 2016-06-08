@@ -32,7 +32,7 @@ const std::string FAKE_CONTAINER_JSON = R"(
             "name": "Panel Manager",
             "no_display": false,
             "description": "some description",
-            "uri": "some/uri"
+            "uri": "some/uri/pad1/pad2/"
         },
         {
             "desktop_file_name": "/home/someuser/.cache/libertine-container/fake1/rootfs/usr/share/applications/sakura.desktop",
@@ -44,7 +44,7 @@ const std::string FAKE_CONTAINER_JSON = R"(
             "name": "Sakura",
             "no_display": false,
             "description": "some other description",
-            "uri": "some/other/uri"
+            "uri": "some/other/uri/pad"
         }
     ]
 }

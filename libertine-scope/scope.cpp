@@ -17,10 +17,13 @@
 
 #include "libertine-scope/preview.h"
 #include "libertine-scope/query.h"
+#include "libertine-scope/action.h"
 #include <localization.h>
 #include <sstream>
-#include <unity/scopes/ActivationResponse.h>
 #include <url-dispatcher.h>
+#include <QFile>
+#include <QTextStream>
+#include <QString>
 
 
 namespace usc = unity::scopes;
@@ -28,26 +31,59 @@ namespace usc = unity::scopes;
 namespace
 {
 
-/**
- * @todo move this class into its own source file.
- */
-class ScopeActivation
-: public usc::ActivationQueryBase
+static bool
+is_whitelist(QString const& line)
 {
-public:
-  ScopeActivation(usc::Result const& result,
-                  usc::ActionMetadata const& metadata)
-  : ActivationQueryBase(result, metadata)
-  { }
-
-  usc::ActivationResponse
-  activate() override
+  if (line.startsWith("whitelist"))
   {
-    return usc::ActivationResponse(status);
+    if (line.split("/").size() < 3)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
   }
+  else
+  {
+    return false;
+  } 
+}
 
-  usc::ActivationResponse::Status status = usc::ActivationResponse::Status::NotHandled;
-};
+static QString
+get_whitelist_key(QString const& line)
+{
+  QStringList parts = line.split("/");
+  return parts[1] + "/" + parts[2].trimmed();
+}
+
+static std::tuple<QStringList,QStringList>
+get_bwlists(std::string scope_dir)
+{
+  //Get blacklisted and whitelisted apps from "blacklist" file in scope dir
+  QStringList blacklist;
+  QStringList whitelist;
+  QFile blacklist_f(QString("%1/%2").arg(QString::fromStdString(scope_dir), QString::fromStdString("blacklist")));
+  if (blacklist_f.exists()) {
+    if (blacklist_f.open(QIODevice::ReadOnly | QIODevice::Text)){
+      QTextStream in(&blacklist_f);
+      while (!in.atEnd()) {
+        QString line(in.readLine());
+        if (!line.startsWith("#") && !line.startsWith("whitelist"))
+        {
+          blacklist.append(line.trimmed());
+        }
+        if (is_whitelist(line))
+        {
+          whitelist.append(get_whitelist_key(line));
+        }
+      }
+      blacklist_f.close();
+    }
+  }
+  return std::tie(blacklist,whitelist);
+}
 
 } // anonymous namespace
 
@@ -79,7 +115,11 @@ usc::SearchQueryBase::UPtr Scope::
 search(usc::CannedQuery const&    query,
        usc::SearchMetadata const& metadata)
 {
-  return usc::SearchQueryBase::UPtr(new Query(query, metadata, libertine_factory_));
+  return usc::SearchQueryBase::UPtr(new Query(query,
+                                              metadata,
+                                              libertine_factory_,
+                                              cache_directory(),
+                                              get_bwlists(scope_directory())));
 }
 
 
@@ -97,14 +137,7 @@ perform_action(usc::Result const&         result,
                std::string const&         /* widget_id */,
                std::string const&         action_id)
 {
-  auto activation = new ScopeActivation(result, metadata);
-
-  if (action_id == "open")
-  {
-    url_dispatch_send(result.uri().c_str() , NULL, NULL);
-  }
-
-  return usc::ActivationQueryBase::UPtr(activation);
+  return usc::ActivationQueryBase::UPtr(new Action(result, metadata, action_id, cache_directory()));
 }
 
 

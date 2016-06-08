@@ -24,12 +24,15 @@ target_link_libraries(scope
   ${URL_DISPATCHER_LIBRARIES}
 )
 
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/config.h.in"
+  "${CMAKE_CURRENT_SOURCE_DIR}/config.h"
+)
 
 set_target_properties(scope
   PROPERTIES
     OUTPUT_NAME "${PACKAGE_NAME}_${SCOPE_NAME}"
 )
-
 install(TARGETS scope
   LIBRARY DESTINATION ${SCOPE_INSTALL_DIR}
 )

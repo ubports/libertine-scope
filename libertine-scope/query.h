@@ -19,8 +19,7 @@
 #include "libertine-scope/libertine.h"
 #include <unity/scopes/ReplyProxyFwd.h>
 #include <unity/scopes/SearchQueryBase.h>
-
-class QStringList;
+#include <QStringList>
 
 
 /**
@@ -32,7 +31,10 @@ class Query
 public:
     Query(unity::scopes::CannedQuery const&    query,
           unity::scopes::SearchMetadata const& metadata,
-          Libertine::Factory const&            libertine_factory);
+          Libertine::Factory const&            libertine_factory,
+          std::string const&                   cache_dir = "", 
+          std::tuple<QStringList,QStringList> const& = std::tuple<QStringList,QStringList>()
+          );
 
     ~Query() = default;
 
@@ -46,9 +48,11 @@ public:
     virtual unity::scopes::VariantMap settings() const;
 
 private:
-    QStringList blacklist() const;
-
     Libertine::Factory libertine_factory_;
+    std::string scope_dir_;
+    std::string cache_dir_;
+    QStringList blacklist_;
+    QStringList whitelist_;
 };
 
 #endif // LIBERTINE_SCOPE_QUERY_H_

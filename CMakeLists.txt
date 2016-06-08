@@ -46,7 +46,10 @@ set(PACKAGE_NAME "libertine-scope.ubuntu")
 set(APP ${PROJECT})
 
 # Important project paths
+# Use this SCOPE_INSTALL_DIR when building the debian
 set(SCOPE_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/unity-scopes/libertine-scope/)
+# USE this when building the click
+#set(SCOPE_INSTALL_DIR "/libertine-scope")
 set(SCOPE_NAME "libertine-scope")
 set(GETTEXT_PACKAGE "${SCOPE_NAME}")
 
@@ -63,10 +66,12 @@ execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
 
 # Configure and install the click manifest and apparmor files
 configure_file(manifest.json.in ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/manifest.json
+install(FILES 
+        ${CMAKE_CURRENT_BINARY_DIR}/manifest.json
+        "libertine-scope.apparmor"
         DESTINATION ${SCOPE_INSTALL_DIR})
-install(FILES "libertine-scope.apparmor"
-        DESTINATION ${SCOPE_INSTALL_DIR})
+#Use this DESTINATION when building click
+#        DESTINATION "/")
 
 # Add our main directories
 add_subdirectory(libertine-scope)

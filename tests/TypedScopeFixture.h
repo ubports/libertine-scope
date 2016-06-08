@@ -85,6 +85,7 @@ public:
     {
         TypedScopeFixtureHelper::set_registry(scope, registry_proxy);
         TypedScopeFixtureHelper::set_scope_directory(scope, "/tmp");
+        TypedScopeFixtureHelper::set_cache_directory(scope, "/tmp");
         TypedScopeFixtureHelper::set_app_directory(scope, "/tmp");
     }
 

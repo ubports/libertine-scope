@@ -1,0 +1,11 @@
+# containerID/desktop file name (without .desktop extension)
+# use containerID "all" to blacklist app from all containers
+# examples:
+all/mb-panel-manager
+all/openjdk-7-java
+all/openjdk-7-policytool
+all/debian-uxterm
+all/yelp
+# include apps per container that are blacklisted for "all" by prepending "whitelist/"
+#whitelist/testc/yelp    
+#whitelist/testc/mb-panel-manager

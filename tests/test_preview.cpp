@@ -28,6 +28,7 @@
 TEST(TestPreview, pushesWidgetsWithAppInformation)
 {
   unity::scopes::testing::Result result;
+  result["department_id"] = "";
   unity::scopes::ActionMetadata metadata("en_US", "phone");
 
   std::unique_ptr<unity::scopes::PreviewWidgetList> list(new unity::scopes::PreviewWidgetList());
@@ -57,7 +58,7 @@ TEST(TestPreview, pushesWidgetsWithAppInformation)
   EXPECT_EQ("actions", buttons.widget_type());
 
   auto buttons_actions = buttons.attribute_values()["actions"].get_array();
-  ASSERT_EQ(1, buttons_actions.size());
+  ASSERT_EQ(2, buttons_actions.size());
   EXPECT_EQ("open", buttons_actions[0].get_dict()["id"].get_string());
   EXPECT_EQ("Open", buttons_actions[0].get_dict()["label"].get_string());
 }

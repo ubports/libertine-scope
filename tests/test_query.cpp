@@ -34,19 +34,19 @@ const std::string LIBERTINE_OUTPUT_WITH_APPS = R"(
     "app_launchers": [{
       "name": "LibreOffice",
       "no_display": false,
-      "uri": "appid://fake/libreoffice/0.0",
+      "uri": "appid://fake-container/libreoffice/0.0",
       "icons": ["file:///lo.png"],
       "description": "libreoffice!"
     }, {
       "name": "Linux",
       "no_display": true,
-      "uri": "appid://fake/linux/0.0",
+      "uri": "appid://fake-container/linux/0.0",
       "icons": ["file:///nix.png"],
       "description": "linux!"
     }, {
       "name": "Library",
       "no_display": false,
-      "uri": "appid://fake/library/0.0",
+      "uri": "appid://fake-container/library/0.0",
       "icons": ["file:///lib.png"],
       "description": "library!"
     }]
@@ -100,17 +100,17 @@ public:
 
   void expect_push_libreoffice(bool success = true)
   {
-    expect_push("LibreOffice", "file:///lo.png", "libreoffice!", "appid://fake/libreoffice/0.0", success);
+    expect_push("LibreOffice", "file:///lo.png", "libreoffice!", "appid://fake-container/libreoffice/0.0", success);
   }
 
   void expect_push_library(bool success = true)
   {
-    expect_push("Library", "file:///lib.png", "library!", "appid://fake/library/0.0", success);
+    expect_push("Library", "file:///lib.png", "library!", "appid://fake-container/library/0.0", success);
   }
 
   void expect_push_linux(bool success = true)
   {
-    expect_push("Linux", "file:///nix.png", "linux!", "appid://fake/linux/0.0", success);
+    expect_push("Linux", "file:///nix.png", "linux!", "appid://fake-container/linux/0.0", success);
   }
 
   unity::scopes::SearchMetadata metadata;
@@ -127,7 +127,6 @@ TEST_F(TestQueryFixture, returnsAllDisplayableAppsWithoutFilters)
   expect_push_libreoffice();
   expect_push_linux();
   expect_push_library();
-
   Query query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
   });
@@ -160,50 +159,32 @@ TEST_F(TestQueryFixture, haltsFurtherPushesAfterFailedPush)
 }
 
 
-// Query class with faked out Settings
-class QueryWithFakeSettings : public Query
-{
-public:
-  QueryWithFakeSettings(unity::scopes::CannedQuery const& query,
-        unity::scopes::SearchMetadata const&  metadata,
-        Libertine::Factory const&   libertine_factory)
-  : Query(query, metadata, libertine_factory)
-    , settings_()
-  {
-  }
-
-  unity::scopes::VariantMap settings() const override
-  {
-    return settings_;
-  }
-
-  unity::scopes::VariantMap settings_;
-};
-
-
 TEST_F(TestQueryFixture, ignoresAnyBlacklistedApps)
-{
-  expect_registry();
-  expect_push_library();
-
-  QueryWithFakeSettings query(canned_query, metadata, []() {
-    return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
-  });
-  query.settings_["blacklist"] = "LibreOffice;Linux";
-  query.run(proxy);
-}
-
-
-TEST_F(TestQueryFixture, stripsQuotationMarksFromBlacklist)
 {
   expect_registry();
   expect_push_linux();
   expect_push_library();
-
-  QueryWithFakeSettings query(canned_query, metadata, []() {
+  QStringList blacklist = {"fake-container/libreoffice"};
+  QStringList whitelist = {};
+  std::tuple<QStringList,QStringList> lists(blacklist, whitelist);
+  Query query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
-  });
-  query.settings_["blacklist"] = "\"LibreOffice\"";
+  }, "/tmp", lists);
+  query.run(proxy);
+}
+
+
+TEST_F(TestQueryFixture, displayWhitelistedApps)
+{
+  expect_registry();
+  expect_push_linux();
+  expect_push_library();
+  QStringList blacklist = {"all/libreoffice"};
+  QStringList whitelist = {"fakeId/liberoffice"};
+  std::tuple<QStringList,QStringList> lists(blacklist, whitelist);
+  Query query(canned_query, metadata, []() {
+    return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
+  }, "/tmp", lists);
   query.run(proxy);
 }
 
