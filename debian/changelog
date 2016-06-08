@@ -1,3 +1,21 @@
+libertine-scope (1.2+16.10.20160602.1-0ubuntu1) yakkety; urgency=medium
+
+  [ Chris Townsend ]
+  * Using the "unconfined" template is strongly discouraged, so use the
+    "ubuntu-scope-network" template and define read_path and write_path.
+  * Use the ubuntu package namespace as canonical is used for special 3rd
+    party click packages.  Also use variable substitution in the manifest.json.in
+    file to match what's in the CMakefile.
+
+  [ Kyle Nitzsche ]
+  * Install ini file names and .so file to be fully qualified.
+
+  [ Stephen M. Webb ]
+  * Use new icon and logo for the Libertine Scope. Also renam "Legacy
+    Applications Scope" to "XApps".
+
+ -- Christopher Townsend <christopher.townsend@canonical.com>  Thu, 02 Jun 2016 18:45:10 +0000
+
 libertine-scope (1.1+16.04.20160506-0ubuntu1) xenial; urgency=medium
 
   [ Chris Townsend ]
