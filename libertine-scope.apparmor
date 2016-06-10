@@ -5,7 +5,7 @@
     "read_path": [
         "@{HOME}/.local/share/libertine/",
         "@{HOME}/.cache/libertine-container/",
-        "@{CLICK_DIR}/com.ubuntu.puritine/"
+        "@{CLICK_DIR}/*puritine*/"
     ],
     "write_path": [
         "/{dev,run}/shm/lttng-ust-wait-5*"
