@@ -15,6 +15,7 @@
  */
 
 #include "libertine-scope/query.h"
+#include "libertine-scope/config.h"
 #include "tests/fake_libertine.h"
 #include <unity/scopes/SearchMetadata.h>
 #include <unity/scopes/CannedQuery.h>
@@ -66,6 +67,30 @@ public:
 };
 
 
+class MockHiddenApps : public HiddenApps
+{
+public:
+  MockHiddenApps()
+    : HiddenApps("")
+  {
+  }
+
+  MOCK_CONST_METHOD1(app_is_hidden, bool(QString const&));
+  MOCK_CONST_METHOD0(empty, bool());
+};
+
+class MockBlacklist : public Blacklist
+{
+public:
+  MockBlacklist()
+    : Blacklist("")
+  {
+  }
+
+  MOCK_CONST_METHOD2(app_is_blacklisted, bool(QString const&, std::string const&));
+};
+
+
 MATCHER_P4(ResultPropertiesMatch, title, art, description, uri, "")
 {
   return arg.contains("title") && arg.contains("art") && arg.contains("description") && arg.contains("uri") &&
@@ -84,13 +109,25 @@ public:
     , canned_query("libertine-scope")
     , reply()
     , proxy(&reply, [](unity::scopes::SearchReply*) {})
-    , category(std::make_shared<FakeCategory>("fakeId", "fake-container", "Application", unity::scopes::CategoryRenderer()))
+    , category(std::make_shared<FakeCategory>("fake-container", "fake-container", "Application", unity::scopes::CategoryRenderer()))
+    , hidden(new testing::NiceMock<MockHiddenApps>())
+    , blacklist(new testing::NiceMock<MockBlacklist>())
   {
+  }
+
+  virtual void SetUp()
+  {
+    EXPECT_CALL(*blacklist, app_is_blacklisted(testing::_, "fake-container"))
+        .WillRepeatedly(testing::Return(false));
+    EXPECT_CALL(*hidden, empty())
+        .WillRepeatedly(testing::Return(true));
+    EXPECT_CALL(*hidden, app_is_hidden(testing::_))
+        .WillRepeatedly(testing::Return(false));
   }
 
   void expect_registry()
   {
-    EXPECT_CALL(reply, register_category("fakeId", "fake-container", "Application", testing::_)).WillOnce(testing::Return(category));
+    EXPECT_CALL(reply, register_category("fake-container", "fake-container", "Application", testing::_)).WillOnce(testing::Return(category));
   }
 
   void expect_push(std::string title, std::string art, std::string description, std::string appId, bool success = true)
@@ -118,23 +155,26 @@ public:
   testing::NiceMock<unity::scopes::testing::MockSearchReply> reply;
   unity::scopes::SearchReplyProxy proxy;
   std::shared_ptr<FakeCategory> category;
+  std::shared_ptr<MockHiddenApps> hidden;
+  std::shared_ptr<MockBlacklist> blacklist;
 };
 
 
-TEST_F(TestQueryFixture, returnsAllDisplayableAppsWithoutFilters)
+TEST_F(TestQueryFixture, pushesAllDisplayableAppsWithoutFilters)
 {
   expect_registry();
   expect_push_libreoffice();
   expect_push_linux();
   expect_push_library();
+
   Query query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
-  });
+  }, hidden, blacklist);
   query.run(proxy);
 }
 
 
-TEST_F(TestQueryFixture, returnsRegularExpressionFilteredListOfApps)
+TEST_F(TestQueryFixture, pushesRegularExpressionFilteredListOfApps)
 {
   expect_registry();
   expect_push_libreoffice();
@@ -142,7 +182,7 @@ TEST_F(TestQueryFixture, returnsRegularExpressionFilteredListOfApps)
 
   Query query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
-  });
+  }, hidden, blacklist);
   query.run(proxy);
 }
 
@@ -154,38 +194,60 @@ TEST_F(TestQueryFixture, haltsFurtherPushesAfterFailedPush)
 
   Query query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
-  });
+  }, hidden, blacklist);
   query.run(proxy);
 }
 
 
-TEST_F(TestQueryFixture, ignoresAnyBlacklistedApps)
+TEST_F(TestQueryFixture, ignoresBlacklistedApps)
 {
   expect_registry();
   expect_push_linux();
   expect_push_library();
-  QStringList blacklist = {"fake-container/libreoffice"};
-  QStringList whitelist = {};
-  std::tuple<QStringList,QStringList> lists(blacklist, whitelist);
+
+  EXPECT_CALL(*blacklist, app_is_blacklisted(QString("libreoffice"), "fake-container"))
+      .WillRepeatedly(testing::Return(true));
+
   Query query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
-  }, "/tmp", lists);
+  }, hidden, blacklist);
   query.run(proxy);
 }
 
 
-TEST_F(TestQueryFixture, displayWhitelistedApps)
+TEST_F(TestQueryFixture, ignoresHiddenAppsInRootDepartment)
 {
   expect_registry();
   expect_push_linux();
-  expect_push_library();
-  QStringList blacklist = {"all/libreoffice"};
-  QStringList whitelist = {"fakeId/liberoffice"};
-  std::tuple<QStringList,QStringList> lists(blacklist, whitelist);
+  expect_push_libreoffice();
+
+  EXPECT_CALL(*hidden, app_is_hidden(QString("fake-container/library")))
+              .WillRepeatedly(testing::Return(true));
+  EXPECT_CALL(*hidden, empty())
+      .WillOnce(testing::Return(false));
+
   Query query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
-  }, "/tmp", lists);
+  }, hidden, blacklist);
   query.run(proxy);
 }
 
+
+TEST_F(TestQueryFixture, ignoresNonHiddenAppsInHiddenDepartment)
+{
+  expect_registry();
+  expect_push_library();
+
+  EXPECT_CALL(*hidden, app_is_hidden(QString("fake-container/library")))
+              .WillRepeatedly(testing::Return(true));
+  EXPECT_CALL(*hidden, empty())
+      .WillOnce(testing::Return(false));
+
+  canned_query.set_department_id(HIDDEN_DEPT_ID);
+
+  Query query(canned_query, metadata, []() {
+    return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
+  }, hidden, blacklist);
+  query.run(proxy);
+}
 } // anonymous namespace

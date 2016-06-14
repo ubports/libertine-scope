@@ -13,26 +13,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LIBERTINE_SCOPE_PREVIEW_H
-#define LIBERTINE_SCOPE_PREVIEW_H
+#ifndef BLACKLIST_H
+#define BLACKLIST_H
 
-#include <unity/scopes/PreviewQueryBase.h>
+#include <QStringList>
 
-
-class Preview
-: public unity::scopes::PreviewQueryBase
+class Blacklist
 {
 public:
-  Preview(unity::scopes::Result const&         result,
-          unity::scopes::ActionMetadata const& metadata);
+  explicit Blacklist(std::string const& data_directory);
+  virtual ~Blacklist() = default;
 
-  virtual ~Preview();
+  virtual bool app_is_blacklisted(QString const& app_id, std::string const& container_id) const;
 
-  void
-  cancelled() override;
+private:
+  void parse_blacklist(QString const& blacklist_file_name);
 
-  void
-  run(unity::scopes::PreviewReplyProxy const& reply) override;
+  QStringList blacklist_;
+  QStringList whitelist_;
 };
 
-#endif /* LIBERTINE_SCOPE_PREVIEW_H */
+#endif // BLACKLIST_H

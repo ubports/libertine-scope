@@ -1,0 +1,9 @@
+# simple blacklisting`
+container1/app1
+all/app2
+
+# blacklisted but overriden by whitelisting
+all/app3
+all/app4
+whitelist/container1/app3
+whitelist/all/app4

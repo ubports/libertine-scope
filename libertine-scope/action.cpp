@@ -18,6 +18,7 @@
 
 #include "libertine-scope/action.h"
 #include "libertine-scope/config.h"
+#include "libertine-scope/hidden_apps.h"
 #include <unity/scopes/ActivationResponse.h>
 #include <unity/scopes/CannedQuery.h>
 #include <url-dispatcher.h>
@@ -27,33 +28,15 @@
 
 namespace usc = unity::scopes;
 
-namespace
-{
-
-static void
-write_apps_to_hidden(QFile &hidden_f, QStringList const& hidden)
-{ 
-  hidden_f.open(QIODevice::WriteOnly | QIODevice::Text);	
-  QTextStream out(&hidden_f);
-  for (auto const& app : hidden)
-  {
-    out << app << "\n";
-  }
-  hidden_f.flush();
-  hidden_f.close();
-}
-
-} //anonymous namespace
-
 
 Action::
 Action(usc::Result const& result,
        usc::ActionMetadata const& metadata,
        std::string const& action_id, 
-       std::string const& cache_dir)
+       std::shared_ptr<HiddenApps> hidden)
     : usc::ActivationQueryBase(result, metadata),
       action_id_(action_id),
-      cache_dir_(cache_dir)
+      hidden_(hidden)
 {
 }
 
@@ -67,37 +50,15 @@ Action::activate()
   }
   else if (action_id_ == "hide")
   {
-    QFile file(QString("%1/%2").arg(QString::fromStdString(cache_dir_),"hidden"));
-    file.open(QIODevice::Append | QIODevice::Text);	
-    QTextStream out(&file);
-    out << QString::fromStdString(result()["app_id"].get_string());
-    endl(out);
-    file.close();
+    hidden_->add(QString::fromStdString(result()["app_id"].get_string()));
+
     usc::CannedQuery cq(SCOPE_PKG + "_" + SCOPE_APP);
     return usc::ActivationResponse(cq);
   }
   else if (action_id_ == "show")
   {
-    QFile hidden_f(QString("%1/%2").arg(QString::fromStdString(cache_dir_), QString::fromStdString("hidden")));
-    if (hidden_f.exists()) {
-      QStringList hidden;
-      if (hidden_f.open(QIODevice::ReadOnly | QIODevice::Text))
-      {
-        QTextStream in(&hidden_f);
-        while (!in.atEnd())
-        {
-          QString line(in.readLine());
-          hidden.append(line.trimmed());
-        }
-        hidden_f.close();
-      }
-      QString app_id = QString::fromStdString(result()["app_id"].get_string());
-      if (hidden.contains(app_id))
-      {
-        hidden.removeAll(app_id);
-        write_apps_to_hidden(hidden_f, hidden);
-      }
-    }
+    hidden_->remove(QString::fromStdString(result()["app_id"].get_string()));
+
     usc::CannedQuery cq(SCOPE_PKG + "_" + SCOPE_APP);
     return usc::ActivationResponse(cq);
   }

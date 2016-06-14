@@ -13,26 +13,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LIBERTINE_SCOPE_PREVIEW_H
-#define LIBERTINE_SCOPE_PREVIEW_H
+#ifndef HIDDEN_APPS_H
+#define HIDDEN_APPS_H
 
-#include <unity/scopes/PreviewQueryBase.h>
+#include <string>
+#include <QStringList>
 
-
-class Preview
-: public unity::scopes::PreviewQueryBase
+class HiddenApps
 {
 public:
-  Preview(unity::scopes::Result const&         result,
-          unity::scopes::ActionMetadata const& metadata);
+  explicit HiddenApps(const std::string& cache_directory);
+  virtual ~HiddenApps() = default;
 
-  virtual ~Preview();
+  virtual bool app_is_hidden(QString const& app_id) const;
+  virtual bool empty() const;
+  virtual void add(QString const& app_id);
+  virtual void remove(QString const& app_id);
 
-  void
-  cancelled() override;
-
-  void
-  run(unity::scopes::PreviewReplyProxy const& reply) override;
+private:
+  QString hidden_file_name_;
+  QStringList apps_;
 };
 
-#endif /* LIBERTINE_SCOPE_PREVIEW_H */
+#endif // HIDDEN_APPS_H

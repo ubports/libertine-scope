@@ -25,12 +25,14 @@
 #include <unity/scopes/ActivationResponse.h>
 #include <unity/scopes/Result.h>
 
+class HiddenApps;
+
 class Action : public unity::scopes::ActivationQueryBase {
   public:
     Action(unity::scopes::Result const&         result,
            unity::scopes::ActionMetadata const& metadata,
            std::string const&                   action_id, 
-           std::string const&                   cache_dir);
+           std::shared_ptr<HiddenApps>          hidden);
 
     virtual ~Action() = default;
     virtual unity::scopes::ActivationResponse activate() override;
@@ -38,5 +40,6 @@ class Action : public unity::scopes::ActivationQueryBase {
   private:
     std::string action_id_;
     std::string cache_dir_;
+    std::shared_ptr<HiddenApps> hidden_;
 };
 #endif

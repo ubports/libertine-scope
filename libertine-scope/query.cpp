@@ -17,7 +17,7 @@
 #include "libertine-scope/query.h"
 #include "libertine-scope/container.h"
 #include "libertine-scope/config.h"
-#include "localization.h"
+#include "libertine-scope/localization.h"
 #include <unity/scopes/CategorisedResult.h>
 #include <unity/scopes/CategoryRenderer.h>
 #include <unity/scopes/QueryBase.h>
@@ -29,129 +29,55 @@
 #include <QStringList>
 #include <QRegExp>
 #include <QFile>
-#include <QDebug>
 #include <QTextStream>
 
 namespace usc = unity::scopes;
 
 namespace
 {
+static const auto NO_X_APPS_DESCRIPTION = _("Update filters or use the Libertine GUI to install applications.");
+static const auto NO_X_APPS_TITLE = _("No X Apps available");
+static const auto ROOT_DEPT_TITLE = _("X Apps");
+static const auto HIDDEN_DEPT_TITLE = _("Hidden X Apps");
+static const auto DESCRIPTION_FIELD = "description";
+static const auto APP_ID_FIELD = "app_id";
+static const auto DEPARTMENT_ID_FIELD = "department_id";
+static const auto EXCLUDED_APPS_FILTER_TITLE = _("Exclude Apps: ");
 
-//returns map of apps with keys: container, app, name
-static std::map<QString,QString>
-app_keys(std::string const& uri)
+struct AppInfo
 {
-  std::map<QString,QString> parts;
-  QStringList uri_parts = QString::fromStdString(uri).split("/");
-  if (uri_parts.size() < 4)
-  {
-    return parts;
-  }
-  parts["container"] = uri_parts[2];
-  parts["name"] = uri_parts[3];
-  parts["key"] = QString("%1/%2").arg(parts["container"],parts["name"]);
-  return parts;
-}
+  QString container;
+  QString app_id;
+  QString key;
+};
 
-static QStringList
-get_hidden(std::string const& cache_dir)
+static AppInfo
+parse_app_info(std::string const& uri)
 {
-  QStringList hidden;
-  QFile hidden_f(QString("%1/%2").arg(QString::fromStdString(cache_dir), QString::fromStdString("hidden")));
-  if (hidden_f.exists())
+  QStringList uri_split = QString::fromStdString(uri).split("/");
+  if (uri_split.size() < 4)
   {
-    if (hidden_f.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-      QTextStream in(&hidden_f);
-      while (!in.atEnd())
-      {
-        QString line(in.readLine());
-        hidden.append(line.trimmed());
-      }   
-      hidden_f.close();
-    }   
+    return  AppInfo{};
   }
-  return hidden;
+
+  return AppInfo{uri_split[2], uri_split[3], QString("%1/%2").arg(uri_split[2]).arg(uri_split[3])};
 }
 
 static void
-make_departments(usc::SearchReplyProxy const& reply)
+register_departments(usc::SearchReplyProxy const& reply)
 {
-  usc::Department::SPtr root_dept; 
-  usc::Department::SPtr hidden_apps_dept; 
-  usc::CannedQuery myquery("libertine-scope.ubuntu");
-  myquery.set_department_id(ROOT_DEPT_ID);
-  root_dept = std::move(usc::Department::create("", myquery, _("X Apps")));
-  myquery.set_department_id(HIDDEN_DEPT_ID);
-  hidden_apps_dept = std::move(usc::Department::create("hidden", myquery, _("Hidden X Apps")));
-  root_dept->add_subdepartment(hidden_apps_dept);
+  usc::CannedQuery departments("libertine-scope.ubuntu");
+  departments.set_department_id(ROOT_DEPT_ID);
+  departments.set_department_id(HIDDEN_DEPT_ID);
+
+  usc::Department::SPtr root_dept{std::move(usc::Department::create("", departments, ROOT_DEPT_TITLE))};
+  root_dept->add_subdepartment(std::move(usc::Department::create(HIDDEN_DEPT_ID, departments, HIDDEN_DEPT_TITLE)));
+
   reply->register_departments(root_dept);
 }
 
-static void
-make_filters(usc::SearchReplyProxy const& reply,
-             Libertine::UPtr              libertine,
-             QStringList           const& hidden,
-             QStringList           const& whitelist_,
-             QStringList           const& blacklist_,
-             QStringList                & excludes_by_filter,
-             usc::FilterState      const& filter_state
-            )
-{
-  std::map<std::string,unity::scopes::OptionSelectorFilter::SPtr> filters;
-  //make exclude scope filter for apps
-  for (auto const& container: libertine->get_container_list())
-  {
-    std::string filter_title = std::string(_("Exclude Apps")) + ": " + container->name();
-    filters[container->id()] = unity::scopes::OptionSelectorFilter::create(container->id(), filter_title, true);
-    unity::scopes::OptionSelectorFilter::SPtr filter = filters[container->id()];
-    // add exclude filter checkable items for each app that pass blacklisting + whitelisting
-    for (auto const& app: container->app_launchers())
-    {
-      auto excludes_map = app_keys(app.uri());
-      //only exlcude through blacklisting if not explicitly whitelisted
-      QString app_id = QString::fromStdString(app.uri()).split("/")[3];
-      QString key = QString::fromStdString(container->id()) + "/" + app_id;
-      if (hidden.contains(key))
-      {
-        continue;
-      }
-      if (whitelist_.contains(key))
-      {
-        filter->add_option(excludes_map["key"].toStdString(), app.name());
-      }
-      else if (!blacklist_.contains(excludes_map["key"]) && !blacklist_.contains("all/" + excludes_map["name"]))
-      {
-        filter->add_option(excludes_map["key"].toStdString(), app.name());
-      }
-    }
-    //get exclude filter checked items
-    if (filter->has_active_option(filter_state))
-    {
-      auto excludeTypes = filter->active_options(filter_state);
-      for (auto const &opt: excludeTypes)
-      {
-        excludes_by_filter.append(QString::fromStdString(opt->id()));
-      }
-    }
-  }
-  //push filters
-  std::list<unity::scopes::FilterBase::SCPtr> filters_v;
-  for (const auto& filter: filters)
-  {
-    if (filter.second->options().size() > 0 )
-    {
-      filters_v.push_back(filter.second);
-    }
-  }
-  reply->push(filters_v, filter_state); 
-}
 
-/**
- * A custom rendering layout brazenly stolen from the click scope, so they look
- * sorta similar.  At least until they change theirs.
- */
-std::string const CATEGORY_APPS_DISPLAY = R"(
+static const auto CATEGORY_APPS_DISPLAY = R"(
     {
         "schema-version" : 1,
         "template" : {
@@ -168,7 +94,6 @@ std::string const CATEGORY_APPS_DISPLAY = R"(
         }
     }
 )";
-
 } // anonymous namespace
 
 
@@ -176,14 +101,12 @@ Query::
 Query(usc::CannedQuery const&    query,
       usc::SearchMetadata const& metadata,
       Libertine::Factory const&  libertine_factory,
-      std::string const& cache_dir,
-      std::tuple<QStringList,QStringList> const& blackwhiteLists
-      )
-: usc::SearchQueryBase(query, metadata)
-, libertine_factory_(libertine_factory)
-, cache_dir_(cache_dir)
-, blacklist_(std::get<0>(blackwhiteLists))
-, whitelist_(std::get<1>(blackwhiteLists))
+      std::shared_ptr<HiddenApps> hidden,
+      std::shared_ptr<Blacklist> blacklist)
+  : usc::SearchQueryBase(query, metadata)
+  , libertine_(libertine_factory())
+  , hidden_(hidden)
+  , blacklist_(blacklist)
 {
 }
 
@@ -192,111 +115,130 @@ void Query::
 cancelled()
 {
 }
- 
 
-unity::scopes::VariantMap
-Query::settings() const
+
+QStringList Query::
+make_filters(usc::SearchReplyProxy const& reply) const
 {
-  return SearchQueryBase::settings();
+  auto filter_state = query().filter_state();
+  QStringList excludes_by_filter;
+  std::list<usc::FilterBase::SCPtr> app_filters;
+
+  //make exclude scope filter for apps
+  for (auto const& container: libertine_->get_container_list())
+  {
+    usc::OptionSelectorFilter::SPtr filter{usc::OptionSelectorFilter::create(container->id(),
+                                                                             EXCLUDED_APPS_FILTER_TITLE + container->name(),
+                                                                             true)};
+    // filter apps from blacklist
+    for (auto const& app: container->app_launchers())
+    {
+      auto app_info = parse_app_info(app.uri());
+
+      if (hidden_->app_is_hidden(app_info.key))
+      {
+        continue;
+      }
+
+      if (!blacklist_->app_is_blacklisted(app_info.app_id, container->id()))
+      {
+        filter->add_option(app_info.key.toStdString(), app.name());
+      }
+    }
+
+    // get apps manually filtered by user
+    if (filter->has_active_option(filter_state))
+    {
+      auto filteredApps = filter->active_options(filter_state);
+      for (auto const &app: filteredApps)
+      {
+        excludes_by_filter.append(QString::fromStdString(app->id()));
+      }
+    }
+
+    if (!filter->options().empty())
+    {
+      app_filters.push_back(filter);
+    }
+  }
+
+  if (!app_filters.empty())
+  {
+    reply->push(app_filters, filter_state);
+  }
+
+  return excludes_by_filter;
 }
 
 
 void Query::
 run(usc::SearchReplyProxy const& reply)
 {
-  auto hidden = get_hidden(cache_dir_);
-  // make scope departments
-  if (hidden.size() > 0 )
-  { 
-    make_departments(reply);
+  if (!hidden_->empty())
+  {
+    register_departments(reply);
   }
 
-  std::pair<QStringList,QStringList> bwlists;
-  std::map<QString,QString> excludes_map;
+  // only provide filters in root department
   QStringList excludes_by_filter;
-  QRegExp re(QString::fromStdString(query().query_string()), Qt::CaseInsensitive);
-  Libertine::UPtr libertine = libertine_factory_();
-
-  //only provide filters in root department: X Apps
   if (query().department_id().empty())
-  { 
-    make_filters(reply, libertine_factory_(), hidden, whitelist_, blacklist_, excludes_by_filter, query().filter_state());
+  {
+    excludes_by_filter = make_filters(reply);
   }
 
-  //make and push results
-  for (auto const& container: libertine->get_container_list())
+  QRegExp search_query(QString::fromStdString(query().query_string()), Qt::CaseInsensitive);
+
+  for (auto const& container: libertine_->get_container_list())
   {
     auto category = reply->register_category(container->id(),
                                              container->name(),
                                              "Application",
                                              usc::CategoryRenderer(CATEGORY_APPS_DISPLAY));
-    bool breaking = false;
+
     for (auto const& app: container->app_launchers())
     {
-      //search
-      if (!(re.isEmpty() || QString::fromStdString(app.name()).contains(re)))
-        continue;
-
-      excludes_map = app_keys(app.uri());
-      //only check for blacklisted if not whitelisted
-      QString app_id;
-      if (QString::fromStdString(app.uri()).split("/").size() >= 4)
-        app_id = QString::fromStdString(app.uri()).split("/")[3];
-      QString key = QString::fromStdString(container->id()) + "/" + app_id;
-      //don't display if blacklisted
-      if (!whitelist_.contains(key))
-      {
-        if (blacklist_.contains(excludes_map["key"]) || blacklist_.contains("all/" + excludes_map["name"]))
-        {
-          continue;
-        }
-      }
-      //don't display apps excluded by filter
-      if (excludes_by_filter.contains(excludes_map["key"]))
+      if (!(search_query.isEmpty() || QString::fromStdString(app.name()).contains(search_query)))
       {
         continue;
       }
 
-      //if root department, don't display if it's a hidden app
+      auto app_info = parse_app_info(app.uri());
+
+      if (blacklist_->app_is_blacklisted(app_info.app_id, container->id()))
+      {
+        continue;
+      }
+
+      if (excludes_by_filter.contains(app_info.key))
+      {
+        continue;
+      }
+
+      // ignore hidden apps in root department
       if (query().department_id().empty() || query().department_id() == ROOT_DEPT_ID)
       {
-        if (hidden.contains(key))
+        if (hidden_->app_is_hidden(app_info.key))
         {
           continue;
         }
       }
-      else
+      else if (!hidden_->app_is_hidden(app_info.key))
       {
-        //don't display non hidden apps in hidden dept
-        if (!hidden.contains(key))
-        {
-          continue;
-        }
+        continue;
       }
+
       usc::CategorisedResult result(category);
       result.set_title(app.name());
       result.set_art(app.icon());
       result.set_uri(app.uri());
-      result["description"] = app.description();
-      result["app_id"] = key.toStdString();
-      //add department id so we know which buttons to display on preview
-      if (query().department_id().empty() || query().department_id() == ROOT_DEPT_ID)
-      {
-        result["department_id"] = ROOT_DEPT_ID;
-      }
-      else
-      {
-        result["department_id"] = "hidden";
-      }
+      result[DESCRIPTION_FIELD] = app.description();
+      result[APP_ID_FIELD] = app_info.key.toStdString();
+      result[DEPARTMENT_ID_FIELD] = (query().department_id().empty() || query().department_id() == ROOT_DEPT_ID) ? ROOT_DEPT_ID : HIDDEN_DEPT_ID;
+
       if (!reply->push(result))
       {
-        breaking = true;
-        break;
+        return;
       }
-    }
-    if (breaking)
-    {
-      break;
     }
   }
 }

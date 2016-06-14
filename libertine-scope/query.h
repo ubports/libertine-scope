@@ -17,6 +17,8 @@
 #define LIBERTINE_SCOPE_QUERY_H_
 
 #include "libertine-scope/libertine.h"
+#include "libertine-scope/blacklist.h"
+#include "libertine-scope/hidden_apps.h"
 #include <unity/scopes/ReplyProxyFwd.h>
 #include <unity/scopes/SearchQueryBase.h>
 #include <QStringList>
@@ -29,30 +31,28 @@ class Query
 : public unity::scopes::SearchQueryBase
 {
 public:
-    Query(unity::scopes::CannedQuery const&    query,
-          unity::scopes::SearchMetadata const& metadata,
-          Libertine::Factory const&            libertine_factory,
-          std::string const&                   cache_dir = "", 
-          std::tuple<QStringList,QStringList> const& = std::tuple<QStringList,QStringList>()
-          );
+  Query(unity::scopes::CannedQuery const&    query,
+        unity::scopes::SearchMetadata const& metadata,
+        Libertine::Factory const&            libertine_factory,
+        std::shared_ptr<HiddenApps>          hidden_apps,
+        std::shared_ptr<Blacklist>           blacklist);
 
-    ~Query() = default;
+  ~Query() = default;
 
-    void
-    cancelled() override;
+  virtual void
+  cancelled() override;
 
-    void
-    run(unity::scopes::SearchReplyProxy const& reply) override;
-
-    // Overriding base class method to add ability to test
-    virtual unity::scopes::VariantMap settings() const;
+  void
+  run(unity::scopes::SearchReplyProxy const& reply) override;
 
 private:
-    Libertine::Factory libertine_factory_;
-    std::string scope_dir_;
-    std::string cache_dir_;
-    QStringList blacklist_;
-    QStringList whitelist_;
+  QStringList get_hidden_department() const;
+  QStringList make_filters(unity::scopes::SearchReplyProxy const& reply) const;
+  void parse_blacklist(const std::string& data_dir);
+
+  Libertine::UPtr libertine_;
+  std::shared_ptr<HiddenApps> hidden_;
+  std::shared_ptr<Blacklist> blacklist_;
 };
 
 #endif // LIBERTINE_SCOPE_QUERY_H_

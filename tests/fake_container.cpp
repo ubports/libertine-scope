@@ -45,7 +45,7 @@ public:
 
 FakeContainer::
 FakeContainer(std::string const& json_string)
-: Container("fakeId", "fakeName")
+: Container("fake-container", "fake-container")
 {
   QJsonDocument json = QJsonDocument::fromJson(QByteArray::fromStdString(json_string), nullptr);
   QJsonObject object = json.object();

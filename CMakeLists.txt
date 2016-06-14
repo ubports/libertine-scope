@@ -81,9 +81,7 @@ add_subdirectory(po)
 # Set up the tests
 enable_testing()
 add_subdirectory(tests)
-add_custom_target(check
-                 ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure
-)
+add_custom_target(check ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure)
 
 set(ARCHIVE_NAME ${CMAKE_PROJECT_NAME}-${PROJECT_VERSION})
 add_custom_target(dist

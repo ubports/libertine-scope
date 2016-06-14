@@ -3,24 +3,27 @@ set (GMOCK_SOURCE_DIR "/usr/src/gmock" CACHE PATH "gmock source directory")
 set (GTEST_INCLUDE_DIR "${GMOCK_SOURCE_DIR}/gtest/include" CACHE PATH "gtest source include directory")
 add_subdirectory(${GMOCK_SOURCE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/gmock")
 
-add_executable(libertine_scope_tests
-  fake_container.cpp
-  fake_libertine.cpp
+function(create_test test_name)
+  add_executable(${test_name}_exe
+    fake_container.cpp
+    fake_libertine.cpp
+    ${test_name}.cpp
+  )
 
-  # tests
-  test_scope.cpp
-  test_preview.cpp
-  test_query.cpp
-)
+  target_link_libraries(${test_name}_exe
+    scope
+    Qt5::Core
+    gmock
+    gmock_main
+  )
 
-target_link_libraries(libertine_scope_tests
-  scope
-  Qt5::Core
-  gmock
-  gmock_main
-)
+  add_test(${test_name} ${test_name}_exe)
+endfunction(create_test)
 
-add_test(test_scope libertine_scope_tests)
-add_test(test_preview libertine_scope_tests)
-add_test(test_query libertine_scope_tests)
+create_test(test_scope)
+create_test(test_preview)
+create_test(test_query)
+create_test(test_hidden_apps)
+create_test(test_blacklist)
 
+file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

@@ -58,20 +58,24 @@ run(usc::PreviewReplyProxy const& reply)
     {"id",    usc::Variant("open")},
     {"label", usc::Variant("Open")},
   });
-  if (result()["department_id"].get_string() == ROOT_DEPT_ID)
+
+  if (result().contains("department_id"))
   {
-      vb.add_tuple({
-        {"id",    usc::Variant("hide")},
-        {"label", usc::Variant("Hide")},
-      });
-  }
-  else
-  { //is hidden department
-      vb.add_tuple({
-        {"id",    usc::Variant("show")},
-        //Translators: Users tap "Show" button to remove an app from the hidden lis of apps: so the meaning is to undo a hide
-        {"label", usc::Variant("Show")},
-      });
+    if (result()["department_id"].get_string() == ROOT_DEPT_ID)
+    {
+        vb.add_tuple({
+          {"id",    usc::Variant("hide")},
+          {"label", usc::Variant("Hide")},
+        });
+    }
+    else
+    {
+        vb.add_tuple({
+          {"id",    usc::Variant("show")},
+          //Translators: Users tap "Show" button to remove an app from the hidden list of apps: so the meaning is to undo a hide
+          {"label", usc::Variant("Show")},
+        });
+    }
   }
   buttons.add_attribute_value("actions", vb.end());
 
