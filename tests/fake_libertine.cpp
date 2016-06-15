@@ -25,12 +25,6 @@ FakeLibertine(std::string const& json)
 }
 
 
-FakeLibertine::
-~FakeLibertine()
-{
-}
-
-
 Libertine::ContainerList const& FakeLibertine::
 get_container_list() const
 {

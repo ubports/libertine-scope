@@ -35,8 +35,6 @@ namespace usc = unity::scopes;
 
 namespace
 {
-static const auto NO_X_APPS_DESCRIPTION = _("Update filters or use the Libertine GUI to install applications.");
-static const auto NO_X_APPS_TITLE = _("No X Apps available");
 static const auto ROOT_DEPT_TITLE = _("X Apps");
 static const auto HIDDEN_DEPT_TITLE = _("Hidden X Apps");
 static const auto DESCRIPTION_FIELD = "description";
@@ -94,7 +92,26 @@ static const auto CATEGORY_APPS_DISPLAY = R"(
         }
     }
 )";
+
+
+static const auto CATEGORY_HINT = R"(
+    {
+        "schema-version": 1,
+        "template": {
+            "category-layout": "grid",
+            "card-size": "large",
+            "card-layout": "horizontal"
+        },
+        "components": {
+            "title": "title"
+        }
+    }
+)";
 } // anonymous namespace
+
+
+std::string const Query::NO_RESULTS_HINT = _("No XApps available. Install new applications with the Libertine Manager.");
+std::string const Query::ALL_RESULTS_FILTERED_HINT = _("All XApps hidden. Reset filters or check the Hidden XApps department.");
 
 
 Query::
@@ -172,6 +189,18 @@ make_filters(usc::SearchReplyProxy const& reply) const
 
 
 void Query::
+show_hint(usc::SearchReplyProxy const& reply,
+          std::string           const& reason) const
+{
+  auto hint_category = reply->register_category("hint", "", "", usc::CategoryRenderer(CATEGORY_HINT));
+  usc::CategorisedResult res(hint_category);
+  res.set_uri(usc::CannedQuery(query()).to_uri());
+  res.set_title(reason);
+  reply->push(res);
+}
+
+
+void Query::
 run(usc::SearchReplyProxy const& reply)
 {
   if (!hidden_->empty())
@@ -187,6 +216,8 @@ run(usc::SearchReplyProxy const& reply)
   }
 
   QRegExp search_query(QString::fromStdString(query().query_string()), Qt::CaseInsensitive);
+  bool has_no_apps = true,
+       all_filtered = true;
 
   for (auto const& container: libertine_->get_container_list())
   {
@@ -197,6 +228,7 @@ run(usc::SearchReplyProxy const& reply)
 
     for (auto const& app: container->app_launchers())
     {
+      has_no_apps = false;
       if (!(search_query.isEmpty() || QString::fromStdString(app.name()).contains(search_query)))
       {
         continue;
@@ -239,6 +271,17 @@ run(usc::SearchReplyProxy const& reply)
       {
         return;
       }
+
+      all_filtered = false;
     }
+  }
+
+  if (has_no_apps)
+  {
+    show_hint(reply, NO_RESULTS_HINT);
+  }
+  else if (all_filtered)
+  {
+    show_hint(reply, ALL_RESULTS_FILTERED_HINT);
   }
 }

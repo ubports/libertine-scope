@@ -101,6 +101,12 @@ MATCHER_P4(ResultPropertiesMatch, title, art, description, uri, "")
 }
 
 
+MATCHER_P(ResultTitleMatch, title, "")
+{
+  return arg.contains("title") && arg["title"] == unity::scopes::Variant(title);
+}
+
+
 class TestQueryFixture : public ::testing::Test
 {
 public:
@@ -247,6 +253,36 @@ TEST_F(TestQueryFixture, ignoresNonHiddenAppsInHiddenDepartment)
 
   Query query(canned_query, metadata, []() {
     return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
+  }, hidden, blacklist);
+  query.run(proxy);
+}
+
+
+TEST_F(TestQueryFixture, showsHintWhenAllAppsFiltered)
+{
+  expect_registry();
+
+  EXPECT_CALL(reply, register_category("hint", "", "", testing::_)).WillOnce(testing::Return(category));
+  EXPECT_CALL(reply, push(testing::Matcher<unity::scopes::CategorisedResult const&>(ResultTitleMatch(Query::ALL_RESULTS_FILTERED_HINT)))).WillOnce(testing::Return(true));
+
+  EXPECT_CALL(*hidden, app_is_hidden(testing::_)).WillRepeatedly(testing::Return(true));
+
+  Query query(canned_query, metadata, []() {
+    return FakeLibertine::make_fake(LIBERTINE_OUTPUT_WITH_APPS);
+  }, hidden, blacklist);
+  query.run(proxy);
+}
+
+
+TEST_F(TestQueryFixture, showsHintWhenNoAppsInContainer)
+{
+  expect_registry();
+
+  EXPECT_CALL(reply, register_category("hint", "", "", testing::_)).WillOnce(testing::Return(category));
+  EXPECT_CALL(reply, push(testing::Matcher<unity::scopes::CategorisedResult const&>(ResultTitleMatch(Query::NO_RESULTS_HINT)))).WillOnce(testing::Return(true));
+
+  Query query(canned_query, metadata, []() {
+    return FakeLibertine::make_fake("");
   }, hidden, blacklist);
   query.run(proxy);
 }

@@ -42,7 +42,6 @@ public:
   }
 };
 
-
 FakeContainer::
 FakeContainer(std::string const& json_string)
 : Container("fake-container", "fake-container")

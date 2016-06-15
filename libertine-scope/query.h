@@ -45,9 +45,13 @@ public:
   void
   run(unity::scopes::SearchReplyProxy const& reply) override;
 
+  static std::string const NO_RESULTS_HINT;
+  static std::string const ALL_RESULTS_FILTERED_HINT;
+
 private:
   QStringList get_hidden_department() const;
   QStringList make_filters(unity::scopes::SearchReplyProxy const& reply) const;
+  void show_hint(unity::scopes::SearchReplyProxy const& reply, std::string const& reason) const;
   void parse_blacklist(const std::string& data_dir);
 
   Libertine::UPtr libertine_;

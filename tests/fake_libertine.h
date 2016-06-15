@@ -27,9 +27,9 @@ class FakeLibertine
 : public Libertine
 {
 public:
-  ~FakeLibertine();
+  virtual ~FakeLibertine() = default;
 
-  Libertine::ContainerList const&
+  virtual Libertine::ContainerList const&
   get_container_list() const override;
 
   static Libertine::UPtr
