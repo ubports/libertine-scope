@@ -1,5 +1,7 @@
 #!/usr/bin/make -f 
 
 %:
-	dh $@ --with translations
+	dh $@
 
+override_dh_auto_build:
+	dh_auto_build -- all translations
