@@ -38,7 +38,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/libertine-scope
   ${SCOPE_INCLUDE_DIRS}
-  ${UAL_INCLUDE_DIRS}
+  SYSTEM ${UAL_INCLUDE_DIRS}
   ${LIBERTINE_INCLUDE_DIRS}
 )
 
@@ -66,7 +66,7 @@ execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
 
 # Configure and install the click manifest and apparmor files
 configure_file(manifest.json.in ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
-install(FILES 
+install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/manifest.json
         "libertine-scope.apparmor"
         DESTINATION ${SCOPE_INSTALL_DIR})
