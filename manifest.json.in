@@ -10,6 +10,6 @@
     },
     "maintainer": "Ubuntu Libertine Team <libertine-team@lists.launchpad.net>",
     "name": "@PACKAGE_NAME@",
-    "title": "@SCOPE_NAME@",
+    "title": "Desktop Apps",
     "version": "@PROJECT_VERSION@"
 }

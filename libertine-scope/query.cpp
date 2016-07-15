@@ -35,8 +35,8 @@ namespace usc = unity::scopes;
 
 namespace
 {
-static const auto ROOT_DEPT_TITLE = _("X Apps");
-static const auto HIDDEN_DEPT_TITLE = _("Hidden X Apps");
+static const auto ROOT_DEPT_TITLE = _("Desktop Apps");
+static const auto HIDDEN_DEPT_TITLE = _("Hidden Desktop Apps");
 static const auto DESCRIPTION_FIELD = "description";
 static const auto APP_ID_FIELD = "app_id";
 static const auto DEPARTMENT_ID_FIELD = "department_id";
@@ -110,8 +110,8 @@ static const auto CATEGORY_HINT = R"(
 } // anonymous namespace
 
 
-std::string const Query::NO_RESULTS_HINT = _("No XApps available. Install new applications with the Libertine Manager.");
-std::string const Query::ALL_RESULTS_FILTERED_HINT = _("All XApps hidden. Reset filters or check the Hidden XApps department.");
+std::string const Query::NO_RESULTS_HINT = _("No applications available. Install new applications with the Libertine Manager.");
+std::string const Query::ALL_RESULTS_FILTERED_HINT = _("All applications hidden. Reset filters or check the Hidden Desktop Apps department.");
 
 
 Query::

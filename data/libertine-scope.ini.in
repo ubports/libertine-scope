@@ -1,5 +1,5 @@
 [ScopeConfig]
-_DisplayName=XApps
+_DisplayName=Desktop Apps
 _Description=Surface and launch DEB-packaged X11-based applications.
 Art=screenshot.png
 Author=The Canonical Libertine Team <libertine-team@lists.launchpad.net>
