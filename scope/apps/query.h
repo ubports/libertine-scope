@@ -16,9 +16,9 @@
 #ifndef LIBERTINE_SCOPE_QUERY_H_
 #define LIBERTINE_SCOPE_QUERY_H_
 
-#include "libertine-scope/libertine.h"
-#include "libertine-scope/blacklist.h"
-#include "libertine-scope/hidden_apps.h"
+#include "scope/apps/libertine.h"
+#include "scope/apps/blacklist.h"
+#include "scope/apps/hidden_apps.h"
 #include <unity/scopes/ReplyProxyFwd.h>
 #include <unity/scopes/SearchQueryBase.h>
 #include <QStringList>

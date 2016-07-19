@@ -14,10 +14,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libertine-scope/query.h"
-#include "libertine-scope/container.h"
-#include "libertine-scope/config.h"
-#include "libertine-scope/localization.h"
+#include "scope/apps/query.h"
+#include "scope/apps/container.h"
+#include "scope/apps/config.h"
+#include "scope/apps/localization.h"
 #include <unity/scopes/CategorisedResult.h>
 #include <unity/scopes/CategoryRenderer.h>
 #include <unity/scopes/QueryBase.h>

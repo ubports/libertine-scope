@@ -17,7 +17,7 @@
 #define LIBERTINE_SCOPE_SCOPEFIXTURE_H_
 
 #include <functional>
-#include "libertine-scope/scope.h"
+#include "scope/apps/scope.h"
 //#include <unity/scopes/testing/TypedScopeFixture.h>
 #include "tests/fake_container_json.h"
 #include "tests/fake_libertine.h"

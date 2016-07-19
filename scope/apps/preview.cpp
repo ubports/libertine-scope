@@ -14,8 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libertine-scope/preview.h"
-#include "libertine-scope/config.h"
+#include "scope/apps/preview.h"
+#include "scope/apps/config.h"
 #include <unity/scopes/PreviewReply.h>
 #include <unity/scopes/Variant.h>
 #include <unity/scopes/VariantBuilder.h>

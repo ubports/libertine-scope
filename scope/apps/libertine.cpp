@@ -14,8 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libertine-scope/libertine.h"
-#include "libertine-scope/container.h"
+#include "scope/apps/libertine.h"
+#include "scope/apps/container.h"
 #include <liblibertine/libertine.h>
 #include <glib.h>
 

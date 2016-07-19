@@ -1,2 +1,2 @@
-[type: gettext/ini] data/libertine-scope.ini.in
+[type: gettext/ini] scope/apps/libertine-scope.ubuntu_libertine-scope.ini.in.in
 @GENERATED_POTFILES@

@@ -19,7 +19,7 @@
 #ifndef SCOPE_ACTION_H_
 #define SCOPE_ACTION_H_
 
-#include "libertine-scope/scope.h"
+#include "scope/apps/scope.h"
 #include <unity/scopes/ActionMetadata.h>
 #include <unity/scopes/ActivationQueryBase.h>
 #include <unity/scopes/ActivationResponse.h>

@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "libertine-scope/hidden_apps.h"
+#include "scope/apps/hidden_apps.h"
 #include <gtest/gtest.h>
 #include <QDir>
 #include <QTemporaryDir>

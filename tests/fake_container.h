@@ -17,7 +17,7 @@
 #define LIBERTINE_SCOPE_FAKE_CONTAINER_H_
 
 
-#include "libertine-scope/container.h"
+#include "scope/apps/container.h"
 
 
 /**

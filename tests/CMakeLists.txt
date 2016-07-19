@@ -11,7 +11,7 @@ function(create_test test_name)
   )
 
   target_link_libraries(${test_name}_exe
-    scope
+    apps
     Qt5::Core
     gmock
     gmock_main

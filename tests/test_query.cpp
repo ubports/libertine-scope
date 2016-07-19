@@ -14,8 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libertine-scope/query.h"
-#include "libertine-scope/config.h"
+#include "scope/apps/query.h"
+#include "scope/apps/config.h"
 #include "tests/fake_libertine.h"
 #include <unity/scopes/SearchMetadata.h>
 #include <unity/scopes/CannedQuery.h>

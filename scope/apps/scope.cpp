@@ -13,12 +13,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "libertine-scope/scope.h"
+#include "scope/apps/scope.h"
 
-#include "libertine-scope/preview.h"
-#include "libertine-scope/query.h"
-#include "libertine-scope/action.h"
-#include "libertine-scope/localization.h"
+#include "scope/apps/preview.h"
+#include "scope/apps/query.h"
+#include "scope/apps/action.h"
+#include "scope/apps/localization.h"
 #include <sstream>
 #include <url-dispatcher.h>
 #include <QFile>

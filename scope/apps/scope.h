@@ -16,7 +16,7 @@
 #ifndef LIBERTINE_SCOPE_SCOPE_H_
 #define LIBERTINE_SCOPE_SCOPE_H_
 
-#include "libertine-scope/libertine.h"
+#include "scope/apps/libertine.h"
 #include <unity/scopes/PreviewQueryBase.h>
 #include <unity/scopes/QueryBase.h>
 #include <unity/scopes/ReplyProxyFwd.h>

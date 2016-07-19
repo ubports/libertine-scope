@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libertine-scope/applauncher.h"
+#include "scope/apps/applauncher.h"
 #include <ubuntu-app-launch/registry.h>
 
 

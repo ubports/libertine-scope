@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libertine-scope/preview.h"
+#include "scope/apps/preview.h"
 #include <unity/scopes/Variant.h>
 #include <gtest/gtest.h>
 #include <unity/scopes/ActionMetadata.h>

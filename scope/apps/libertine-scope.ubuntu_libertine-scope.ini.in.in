@@ -1,7 +1,11 @@
 [ScopeConfig]
-_DisplayName=Desktop Apps
+_DisplayName=@SCOPE_DISPLAY_NAME@
 _Description=Surface and launch DEB-packaged X11-based applications.
 Art=screenshot.png
 Author=The Canonical Libertine Team <libertine-team@lists.launchpad.net>
-Icon=icon.png
+Icon=@APPS_DATA_DIR@/apps.png
+_SearchHint=Search apps
 Keywords=apps
+
+[Appearance]
+LogoOverlayColor=#ffffffff

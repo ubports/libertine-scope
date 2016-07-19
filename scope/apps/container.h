@@ -17,7 +17,7 @@
 #define LIBERTINE_SCOPE_CONTAINER_H
 
 
-#include "libertine-scope/applauncher.h"
+#include "scope/apps/applauncher.h"
 #include <string>
 #include <vector>
 

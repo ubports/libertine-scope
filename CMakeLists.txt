@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0.2)
+cmake_policy(SET CMP0048 NEW)
+
 project(libertine-scope
         VERSION 1.2
         LANGUAGES CXX)
@@ -24,39 +26,45 @@ add_definitions(
 
 # Search for our dependencies
 include(GNUInstallDirs)
-find_package(PkgConfig)
+find_package(PkgConfig REQUIRED)
 find_package(Intltool)
 find_package(Qt5Core REQUIRED)
-find_package(Qt5Gui REQUIRED)
+find_program(INTLTOOL_MERGE intltool-merge)
 
-pkg_check_modules(SCOPE libunity-scopes>=0.6.0 REQUIRED)
-pkg_check_modules(UAL ubuntu-app-launch-2>=0.5.0 REQUIRED)
-pkg_check_modules(LIBERTINE libertine REQUIRED)
+# useful variables
+set(APPS_LIB_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/unity-scopes/libertine-scope/)
+set(APPS_DATA_DIR ${CMAKE_INSTALL_FULL_DATADIR}/unity/scopes/libertine-scope/)
+set(SCOPE_NAME "libertine-scope")
+set(SCOPE_DISPLAY_NAME "Desktop Apps")
+set(PACKAGE_NAME "libertine-scope.ubuntu_${SCOPE_NAME}")
+option(CLICK_MODE "Installs to a contained location" off)
+
+add_definitions(-DSCOPE_NAME="${SCOPE_NAME}")
+add_definitions(-DGETTEXT_PACKAGE="${SCOPE_NAME}")
+
+pkg_check_modules(SCOPE libunity-scopes>=1.0.0 REQUIRED)
+pkg_check_modules(UAL ubuntu-app-launch-2>=0.9.0 REQUIRED)
+pkg_check_modules(LIBERTINE libertine>=0.99 REQUIRED)
 
 # Add our dependencies to the include paths
 include_directories(
   ${CMAKE_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/libertine-scope
   ${SCOPE_INCLUDE_DIRS}
   SYSTEM ${UAL_INCLUDE_DIRS}
   ${LIBERTINE_INCLUDE_DIRS}
 )
 
-set(PACKAGE_NAME "libertine-scope.ubuntu")
 set(APP ${PROJECT})
 
 # Important project paths
-# Use this SCOPE_INSTALL_DIR when building the debian
-set(SCOPE_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/unity-scopes/libertine-scope/)
-# USE this when building the click
-#set(SCOPE_INSTALL_DIR "/libertine-scope")
+if (CLICK_MODE)
+  set(SCOPE_INSTALL_DIR "/libertine-scope")
+else()
+  set(SCOPE_INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/unity-scopes/libertine-scope/)
+endif(CLICK_MODE)
+
 set(SCOPE_NAME "libertine-scope")
 set(GETTEXT_PACKAGE "${SCOPE_NAME}")
-
-# If we need to refer to the scope's name or package in code, these definitions will help
-add_definitions(-DPACKAGE_NAME="${PACKAGE_NAME}")
-add_definitions(-DSCOPE_NAME="${SCOPE_NAME}")
-add_definitions(-DGETTEXT_PACKAGE="${GETTEXT_PACKAGE}")
 
 # This command figures out the target architecture and puts it into the manifest file
 execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
@@ -66,15 +74,20 @@ execute_process(COMMAND dpkg-architecture -qDEB_HOST_ARCH
 
 # Configure and install the click manifest and apparmor files
 configure_file(manifest.json.in ${CMAKE_CURRENT_BINARY_DIR}/manifest.json)
-install(FILES
+if (CLICK_MODE)
+  install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/manifest.json
+        "libertine-scope.apparmor"
+        DESTINATION "/")
+else()
+  install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/manifest.json
         "libertine-scope.apparmor"
         DESTINATION ${SCOPE_INSTALL_DIR})
-#Use this DESTINATION when building click
-#        DESTINATION "/")
+endif()
 
 # Add our main directories
-add_subdirectory(libertine-scope)
+add_subdirectory(scope)
 add_subdirectory(data)
 add_subdirectory(po)
 

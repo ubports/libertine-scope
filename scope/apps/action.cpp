@@ -16,9 +16,9 @@
  *	Kyle Nitzsche <kyle.nitzsche@canonical.com>
  */
 
-#include "libertine-scope/action.h"
-#include "libertine-scope/config.h"
-#include "libertine-scope/hidden_apps.h"
+#include "scope/apps/action.h"
+#include "scope/apps/config.h"
+#include "scope/apps/hidden_apps.h"
 #include <unity/scopes/ActivationResponse.h>
 #include <unity/scopes/CannedQuery.h>
 #include <url-dispatcher.h>
@@ -40,6 +40,7 @@ Action(usc::Result const& result,
 {
 }
 
+
 usc::ActivationResponse
 Action::activate()
 {
@@ -52,14 +53,14 @@ Action::activate()
   {
     hidden_->add(QString::fromStdString(result()["app_id"].get_string()));
 
-    usc::CannedQuery cq(SCOPE_PKG + "_" + SCOPE_APP);
+    usc::CannedQuery cq(SCOPE_PKG);
     return usc::ActivationResponse(cq);
   }
   else if (action_id_ == "show")
   {
     hidden_->remove(QString::fromStdString(result()["app_id"].get_string()));
 
-    usc::CannedQuery cq(SCOPE_PKG + "_" + SCOPE_APP);
+    usc::CannedQuery cq(SCOPE_PKG);
     return usc::ActivationResponse(cq);
   }
   return usc::ActivationResponse(usc::ActivationResponse::Status::NotHandled);

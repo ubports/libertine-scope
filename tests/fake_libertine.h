@@ -17,7 +17,7 @@
 #define LIBERTINE_SCOPE_FAKE_LIBERTINE_H_
 
 
-#include "libertine-scope/libertine.h"
+#include "scope/apps/libertine.h"
 
 
 /**
