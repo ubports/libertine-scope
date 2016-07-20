@@ -1,5 +1,5 @@
 intltool_update_potfile(
-  UBUNTU_SDK_DEFAULTS
+  KEYWORDS "_" "_:1,2" "N_" "N_:1,2"
   POTFILES_TEMPLATE POTFILES.in.in
   COPYRIGHT_HOLDER "Canonical Ltd."
   GETTEXT_PACKAGE ${GETTEXT_PACKAGE}
