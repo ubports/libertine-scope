@@ -30,14 +30,14 @@ configure_file(
 
 set_target_properties(apps
   PROPERTIES
-    OUTPUT_NAME ${PACKAGE_NAME}
+    OUTPUT_NAME ${FULLY_QUALIFIED_NAME}
 )
 
 install(TARGETS apps
   LIBRARY DESTINATION "${APPS_LIB_DIR}"
 )
 
-set(APPS_INI_TARGET ${PACKAGE_NAME}.ini)
+set(APPS_INI_TARGET ${FULLY_QUALIFIED_NAME}.ini)
 configure_file(
   ${APPS_INI_TARGET}.in.in
   ${APPS_INI_TARGET}.in
