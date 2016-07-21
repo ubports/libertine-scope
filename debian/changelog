@@ -1,3 +1,26 @@
+libertine-scope (1.3+16.10.20160616-0ubuntu1) yakkety; urgency=medium
+
+  [ Chris Townsend ]
+  * Use wildcard matching for allowing reading any puritine click package paths
+    that have the name "puritine" anywhere in the Click package name. (LP: #1590453)
+
+  [ Kyle Nitzsche ]
+  * Replace the scope settings approach to suppress display of apps with a scope
+    filter based approach. This provides a blacklist file for permanent suppression
+    and filters for user suppression.
+  * Provide a "Hidden X Apps" department for a place to store the apps hidden in
+    the main scope view, so they can be unhidden later if desired.
+  * Hide 'Help' by default for all containers. (LP: #1591511)
+  * Removed Settings. (LP: #1591494)
+
+  [ Larry Price ]
+  * Refactor Query class for consistent style and extract some functionality to
+    helper classes.
+  * Show a message when no apps are available due to filters or no apps installed.
+    (LP: #1589699)
+
+ -- Christopher Townsend <christopher.townsend@canonical.com>  Thu, 16 Jun 2016 14:59:30 +0000
+
 libertine-scope (1.2+16.10.20160602.1-0ubuntu1) yakkety; urgency=medium
 
   [ Chris Townsend ]
