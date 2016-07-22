@@ -8,7 +8,7 @@
         "@{CLICK_DIR}/*puritine*/"
     ],
     "write_path": [
-        "/{dev,run}/shm/lttng-ust-wait-5*"
+        "/{dev,run}/shm/lttng-ust-wait-*"
      ]
 }
 
