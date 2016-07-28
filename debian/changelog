@@ -1,3 +1,16 @@
+libertine-scope (1.3.1+16.10.20160722-0ubuntu1) yakkety; urgency=medium
+
+  [ Chris Townsend ]
+  * Rename the scope to "Desktop Apps" per product management and design.
+    (LP: #1602393)
+
+  [ Larry Price ]
+  * Fix parallel make and prevent generation of translations except during debuild.
+  * Suppress compiler warnings for header files included from libubuntu-app-launch.
+  * Restructure libertine-scope in preparation for adding the store scope.
+
+ -- Christopher Townsend <christopher.townsend@canonical.com>  Fri, 22 Jul 2016 13:48:17 +0000
+
 libertine-scope (1.3+16.10.20160616-0ubuntu1) yakkety; urgency=medium
 
   [ Chris Townsend ]

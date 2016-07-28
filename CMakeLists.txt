@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 cmake_policy(SET CMP0048 NEW)
 
 project(libertine-scope
-        VERSION 1.3
+        VERSION 1.3.1
         LANGUAGES CXX)
 
 # We require at least g++ 4.9, to avoid ABI breakage with earlier versions.
