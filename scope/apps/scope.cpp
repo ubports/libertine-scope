@@ -29,6 +29,16 @@
 namespace usc = unity::scopes;
 
 
+namespace
+{
+static void
+open_application(std::string const& app_uri)
+{
+  url_dispatch_send(app_uri.c_str(), NULL, NULL);
+}
+}
+
+
 Scope::
 Scope(Libertine::Factory const& libertine_factory)
 : libertine_factory_(libertine_factory)
@@ -56,6 +66,7 @@ usc::SearchQueryBase::UPtr Scope::
 search(usc::CannedQuery const&    query,
        usc::SearchMetadata const& metadata)
 {
+  filter_state_ = query.filter_state();
   return usc::SearchQueryBase::UPtr(new Query(query,
                                               metadata,
                                               libertine_factory_,
@@ -81,7 +92,9 @@ perform_action(usc::Result const&         result,
   return usc::ActivationQueryBase::UPtr(new Action(result,
                                                    metadata,
                                                    action_id,
-                                                   std::make_shared<HiddenApps>(cache_directory())));
+                                                   open_application,
+                                                   std::make_shared<HiddenApps>(cache_directory()),
+                                                   filter_state_));
 }
 
 

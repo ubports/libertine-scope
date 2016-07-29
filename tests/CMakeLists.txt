@@ -7,6 +7,7 @@ function(create_test test_name)
   add_executable(${test_name}_exe
     fake_container.cpp
     fake_libertine.cpp
+    mock_hidden_apps.h
     ${test_name}.cpp
   )
 
@@ -25,5 +26,6 @@ create_test(test_preview)
 create_test(test_query)
 create_test(test_hidden_apps)
 create_test(test_blacklist)
+create_test(test_action)
 
 file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

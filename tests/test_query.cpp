@@ -17,6 +17,7 @@
 #include "scope/apps/query.h"
 #include "scope/apps/config.h"
 #include "tests/fake_libertine.h"
+#include "tests/mock_hidden_apps.h"
 #include <unity/scopes/SearchMetadata.h>
 #include <unity/scopes/CannedQuery.h>
 #include <unity/scopes/SearchReplyProxyFwd.h>
@@ -66,18 +67,6 @@ public:
 
 };
 
-
-class MockHiddenApps : public HiddenApps
-{
-public:
-  MockHiddenApps()
-    : HiddenApps("")
-  {
-  }
-
-  MOCK_CONST_METHOD1(app_is_hidden, bool(QString const&));
-  MOCK_CONST_METHOD0(empty, bool());
-};
 
 class MockBlacklist : public Blacklist
 {

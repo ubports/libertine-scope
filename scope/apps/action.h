@@ -15,31 +15,37 @@
  * * Authored by:
  *	Kyle Nitzsche <kyle.nitzsche@canonical.com>
  */
-
 #ifndef SCOPE_ACTION_H_
 #define SCOPE_ACTION_H_
 
-#include "scope/apps/scope.h"
+
 #include <unity/scopes/ActionMetadata.h>
 #include <unity/scopes/ActivationQueryBase.h>
 #include <unity/scopes/ActivationResponse.h>
 #include <unity/scopes/Result.h>
 
+
 class HiddenApps;
 
 class Action : public unity::scopes::ActivationQueryBase {
-  public:
-    Action(unity::scopes::Result const&         result,
-           unity::scopes::ActionMetadata const& metadata,
-           std::string const&                   action_id, 
-           std::shared_ptr<HiddenApps>          hidden);
+public:
+  typedef std::function<void(std::string const&)> OpenUriAction;
 
-    virtual ~Action() = default;
-    virtual unity::scopes::ActivationResponse activate() override;
+  explicit Action(unity::scopes::Result const&         result,
+                  unity::scopes::ActionMetadata const& metadata,
+                  std::string const&                   action_id,
+                  OpenUriAction                        open_action,
+                  std::shared_ptr<HiddenApps>          hidden,
+                  unity::scopes::FilterState const&    filterState);
 
-  private:
-    std::string action_id_;
-    std::string cache_dir_;
-    std::shared_ptr<HiddenApps> hidden_;
+  virtual ~Action() = default;
+  virtual unity::scopes::ActivationResponse activate() override;
+
+private:
+  std::string action_id_;
+  std::string cache_dir_;
+  OpenUriAction open_action_;
+  std::shared_ptr<HiddenApps> hidden_;
+  unity::scopes::FilterState filter_state_;
 };
 #endif

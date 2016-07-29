@@ -78,6 +78,7 @@ public:
 
 private:
   Libertine::Factory libertine_factory_;
+  unity::scopes::FilterState filter_state_;
 };
 
 #endif // LIBERTINE_SCOPE_SCOPE_H_

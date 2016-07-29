@@ -29,14 +29,30 @@
 namespace usc = unity::scopes;
 
 
+namespace
+{
+static usc::ActivationResponse
+sendToResults(usc::FilterState const& filter_state)
+{
+  usc::CannedQuery query(FULLY_QUALIFIED_APPS_SCOPE);
+  query.set_filter_state(filter_state);
+  return usc::ActivationResponse(query);
+}
+}
+
+
 Action::
-Action(usc::Result const& result,
-       usc::ActionMetadata const& metadata,
-       std::string const& action_id, 
-       std::shared_ptr<HiddenApps> hidden)
-    : usc::ActivationQueryBase(result, metadata),
-      action_id_(action_id),
-      hidden_(hidden)
+Action(unity::scopes::Result const&         result,
+       unity::scopes::ActionMetadata const& metadata,
+       std::string const&                   action_id,
+       Action::OpenUriAction                open_action,
+       std::shared_ptr<HiddenApps>          hidden,
+       unity::scopes::FilterState const&    filter_state)
+  : usc::ActivationQueryBase(result, metadata)
+  , action_id_(action_id)
+  , open_action_(open_action)
+  , hidden_(hidden)
+  , filter_state_(filter_state)
 {
 }
 
@@ -46,22 +62,17 @@ Action::activate()
 {
   if (action_id_ == "open")
   {
-    url_dispatch_send(result().uri().c_str() , NULL, NULL);
-    return usc::ActivationResponse(usc::ActivationResponse::Status::NotHandled);
+    open_action_(result().uri());
   }
   else if (action_id_ == "hide")
   {
     hidden_->add(QString::fromStdString(result()["app_id"].get_string()));
-
-    usc::CannedQuery cq(FULLY_QUALIFIED_APPS_SCOPE);
-    return usc::ActivationResponse(cq);
+    return sendToResults(filter_state_);
   }
   else if (action_id_ == "show")
   {
     hidden_->remove(QString::fromStdString(result()["app_id"].get_string()));
-
-    usc::CannedQuery cq(FULLY_QUALIFIED_APPS_SCOPE);
-    return usc::ActivationResponse(cq);
+    return sendToResults(filter_state_);
   }
   return usc::ActivationResponse(usc::ActivationResponse::Status::NotHandled);
 }
