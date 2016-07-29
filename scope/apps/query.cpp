@@ -121,7 +121,7 @@ Query(usc::CannedQuery const&    query,
       std::shared_ptr<HiddenApps> hidden,
       std::shared_ptr<Blacklist> blacklist)
   : usc::SearchQueryBase(query, metadata)
-  , libertine_(libertine_factory())
+  , libertine_factory_(libertine_factory)
   , hidden_(hidden)
   , blacklist_(blacklist)
 {
@@ -135,14 +135,14 @@ cancelled()
 
 
 QStringList Query::
-make_filters(usc::SearchReplyProxy const& reply) const
+make_filters(usc::SearchReplyProxy const& reply, Libertine::UPtr libertine) const
 {
   auto filter_state = query().filter_state();
   QStringList excludes_by_filter;
   std::list<usc::FilterBase::SCPtr> app_filters;
 
   //make exclude scope filter for apps
-  for (auto const& container: libertine_->get_container_list())
+  for (auto const& container: libertine->get_container_list())
   {
     usc::OptionSelectorFilter::SPtr filter{usc::OptionSelectorFilter::create(container->id(),
                                                                              EXCLUDED_APPS_FILTER_TITLE + container->name(),
@@ -208,18 +208,20 @@ run(usc::SearchReplyProxy const& reply)
     register_departments(reply);
   }
 
+  auto libertine = libertine_factory_();
+
   // only provide filters in root department
   QStringList excludes_by_filter;
   if (query().department_id().empty())
   {
-    excludes_by_filter = make_filters(reply);
+    excludes_by_filter = make_filters(reply, libertine);
   }
 
   QRegExp search_query(QString::fromStdString(query().query_string()), Qt::CaseInsensitive);
   bool has_no_apps = true,
        all_filtered = true;
 
-  for (auto const& container: libertine_->get_container_list())
+  for (auto const& container: libertine->get_container_list())
   {
     auto category = reply->register_category(container->id(),
                                              container->name(),

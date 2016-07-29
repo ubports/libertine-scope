@@ -29,7 +29,7 @@ class Container;
 class Libertine
 {
 public:
-  using UPtr = std::unique_ptr<Libertine>;
+  using UPtr = std::shared_ptr<Libertine>;
   using ContainerList = std::vector<std::unique_ptr<Container>>;
 
   /**

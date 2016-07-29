@@ -50,11 +50,11 @@ public:
 
 private:
   QStringList get_hidden_department() const;
-  QStringList make_filters(unity::scopes::SearchReplyProxy const& reply) const;
+  QStringList make_filters(unity::scopes::SearchReplyProxy const& reply, Libertine::UPtr libertine) const;
   void show_hint(unity::scopes::SearchReplyProxy const& reply, std::string const& reason) const;
   void parse_blacklist(const std::string& data_dir);
 
-  Libertine::UPtr libertine_;
+  Libertine::Factory libertine_factory_;
   std::shared_ptr<HiddenApps> hidden_;
   std::shared_ptr<Blacklist> blacklist_;
 };

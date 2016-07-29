@@ -91,6 +91,5 @@ Libertine::
 Libertine::UPtr Libertine::
 from_libertine_cli()
 {
-  return Libertine::UPtr(new LibertineCli());
+  return std::make_shared<LibertineCli>();
 }
-
