@@ -53,14 +53,14 @@ Action::activate()
   {
     hidden_->add(QString::fromStdString(result()["app_id"].get_string()));
 
-    usc::CannedQuery cq(SCOPE_PKG);
+    usc::CannedQuery cq(FULLY_QUALIFIED_APPS_SCOPE);
     return usc::ActivationResponse(cq);
   }
   else if (action_id_ == "show")
   {
     hidden_->remove(QString::fromStdString(result()["app_id"].get_string()));
 
-    usc::CannedQuery cq(SCOPE_PKG);
+    usc::CannedQuery cq(FULLY_QUALIFIED_APPS_SCOPE);
     return usc::ActivationResponse(cq);
   }
   return usc::ActivationResponse(usc::ActivationResponse::Status::NotHandled);

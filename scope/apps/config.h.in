@@ -16,10 +16,8 @@
 #ifndef LIBERTINE_SCOPE_CONFIG_H_
 #define LIBERTINE_SCOPE_CONFIG_H_
 
-const std::string SCOPE_PKG = "@PACKAGE_NAME@";
+const std::string FULLY_QUALIFIED_APPS_SCOPE = "@FULLY_QUALIFIED_NAME@";
 const std::string ROOT_DEPT_ID = "root_dept";
 const std::string HIDDEN_DEPT_ID = "hidden_dept";
 
 #endif // LIBERTINE_SCOPE_CONFIG_H_
-
-
