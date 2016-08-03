@@ -2,10 +2,12 @@
 # use containerID "all" to blacklist app from all containers
 # examples:
 all/mb-panel-manager
+all/matchbox-keyboard
 all/openjdk-7-java
 all/openjdk-7-policytool
 all/debian-uxterm
 all/yelp
+all/org.kde.Help
 # include apps per container that are blacklisted for "all" by prepending "whitelist/"
 #whitelist/testc/yelp    
 #whitelist/testc/mb-panel-manager
