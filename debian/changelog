@@ -1,3 +1,21 @@
+libertine-scope (1.3.2+16.10.20160812-0ubuntu1) yakkety; urgency=medium
+
+  [ Tarmac, Ted Gould ]
+  * No change rebuild for UAL ABI change
+
+ -- Ted Gould <ted@gould.cx>  Fri, 12 Aug 2016 18:47:03 +0000
+
+libertine-scope (1.3.2+16.10.20160801-0ubuntu1) yakkety; urgency=medium
+
+  [ Larry Price ]
+  * Use full scope name in canned queries to properly return from Show/Hide
+    actions.
+  * Initialize libertine object in Query::run() to allow constructor to execute
+    in time. (LP: #1595944)
+  * Showing/hiding applications should retain filter state. (LP: #1592407)
+
+ -- Christopher Townsend <christopher.townsend@canonical.com>  Mon, 01 Aug 2016 13:27:26 +0000
+
 libertine-scope (1.3.1+16.10.20160722-0ubuntu1) yakkety; urgency=medium
 
   [ Chris Townsend ]

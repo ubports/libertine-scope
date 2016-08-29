@@ -7,20 +7,46 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libertine-scope\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2016-07-15 15:47-0400\n"
+"POT-Creation-Date: 2016-07-20 12:38-0400\n"
 "PO-Revision-Date: 2016-05-20 15:56+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@gmail.com>\n"
 "Language-Team: Ukrainian <uk@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-07-17 06:22+0000\n"
-"X-Generator: Launchpad (build 18140)\n"
+"X-Launchpad-Export-Date: 2016-08-25 06:10+0000\n"
+"X-Generator: Launchpad (build 18179)\n"
 
-#: ../data/libertine-scope.ini.in.h:1
+#: ../scope/apps/libertine-scope.ubuntu_libertine-scope.ini.in.in.h:1
+#: ../scope/apps/query.cpp:38
 msgid "Desktop Apps"
 msgstr ""
 
-#: ../data/libertine-scope.ini.in.h:2
+#: ../scope/apps/libertine-scope.ubuntu_libertine-scope.ini.in.in.h:2
 msgid "Surface and launch DEB-packaged X11-based applications."
+msgstr ""
+
+#: ../scope/apps/libertine-scope.ubuntu_libertine-scope.ini.in.in.h:3
+msgid "Search apps"
+msgstr ""
+
+#: ../scope/apps/query.cpp:39
+msgid "Hidden Desktop Apps"
+msgstr ""
+
+#: ../scope/apps/query.cpp:43
+msgid "Exclude Apps: "
+msgstr ""
+
+#. anonymous namespace
+#: ../scope/apps/query.cpp:113
+msgid ""
+"No applications available. Install new applications with the Libertine "
+"Manager."
+msgstr ""
+
+#: ../scope/apps/query.cpp:114
+msgid ""
+"All applications hidden. Reset filters or check the Hidden Desktop Apps "
+"department."
 msgstr ""
