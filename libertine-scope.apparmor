@@ -4,6 +4,7 @@
     "policy_version": 1.3,
     "read_path": [
         "@{HOME}/.local/share/libertine/",
+        "@{HOME}/.local/share/libertine-container/user-data/",
         "@{HOME}/.cache/libertine-container/",
         "@{CLICK_DIR}/*puritine*/"
     ],
