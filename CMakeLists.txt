@@ -90,7 +90,7 @@ endif()
 # Add our main directories
 add_subdirectory(scope)
 add_subdirectory(data)
-add_subdirectory(po)
+# add_subdirectory(po)
 
 # Set up the tests
 enable_testing()
