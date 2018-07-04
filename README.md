@@ -16,7 +16,7 @@ the project is the following set of commands.
     cmake ..
     make
 
-Testinmg the Scope
+Testing the Scope
 ------------------
 
 Without system installation, you can test the scope using the unity-scope-tool
